@@ -1,0 +1,9 @@
+{
+	"name" : "Debug-app",
+	"version": "1.0.0",
+	"dependencies": {
+		"express": "~3.4.4"
+	},
+	"main" : "server.js",
+	"private" : true
+}
