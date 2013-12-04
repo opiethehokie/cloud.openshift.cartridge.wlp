@@ -7,9 +7,9 @@ source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
 function start {
     #/usr/sbin/httpd -f $OPENSHIFT_HTTPD_DIR/etc/httpd.conf -k start
-    pushd $OPENSHIFT_DEBUG_REPO_DIR
-    npm install -d
-    npm start -d
+    #pushd $OPENSHIFT_DEBUG_REPO_DIR
+    #npm install -d
+    #npm start -d
     client_message "debug cart started"
 }
 
