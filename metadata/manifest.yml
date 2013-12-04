@@ -25,6 +25,8 @@ Endpoints:
     Private-Port-Name: MY_PORT
     Private-Port:      8081
     Public-Port-Name:  PROXY_PORT
+    Protocols:
+      - http
     Mappings:
       - Frontend:      ""
         Backend:       ""
