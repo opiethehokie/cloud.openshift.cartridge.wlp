@@ -26,6 +26,29 @@ function restart {
     client_message "debug cart restarted"
 }
 
+function status {
+  client_message "debug status"
+}
+
+function reload {
+  client_message "debug status"
+}
+function tidy {
+  client_message "debug status"
+}
+function pre-build {
+  client_message "debug status"
+}
+function build {
+  client_message "debug status"
+}
+function deploy {
+  client_message "debug status"
+}
+function post-deploy {
+  client_message "debug status"
+}
+
 function catchall {
     echo "not yet implemented"
 }
@@ -35,11 +58,11 @@ case "$1" in
   stop)        stop ;;
   restart)     restart ;;
   status)      status ;;
-  reload)      catchall ;;
-  tidy)        catchall ;;
-  pre-build)   catchall ;;
-  build)       catchall ;;
-  deploy)      catchall ;;
+  reload)      reload ;;
+  tidy)        tidy ;;
+  pre-build)   pre-build ;;
+  build)       build ;;
+  deploy)      deploy ;;
   post-deploy) catchall ;;
   *)           exit 0
 esac
