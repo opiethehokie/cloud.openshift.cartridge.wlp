@@ -7,17 +7,17 @@ source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
 function start {
     #/usr/sbin/httpd -f $OPENSHIFT_HTTPD_DIR/etc/httpd.conf -k start
-    echo started
+    client_message "debug cart started"
 }
 
 function stop {
     #/usr/sbin/httpd -f $OPENSHIFT_HTTPD_DIR/etc/httpd.conf -k stop
-    echo stopped
+    client_message "debug cart stopped"
 }
 
 function restart {
     #/usr/sbin/httpd -f $OPENSHIFT_HTTPD_DIR/etc/httpd.conf -k restart
-    echo restarted
+    client_message "debug cart restarted"
 }
 
 function catchall {
