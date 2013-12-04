@@ -23,7 +23,7 @@ Cart-Data:
 Endpoints:
   - Private-IP-Name:   MY_IP
     Private-Port-Name: MY_PORT
-    Private-Port:      8081
+    Private-Port:      8080
     Public-Port-Name:  PROXY_PORT
     Protocols:
       - http
