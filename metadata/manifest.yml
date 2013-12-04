@@ -1,0 +1,31 @@
+Name: debug
+Cartridge-Short-Name: DEBUG
+Display-Name: Debug Cartridge
+Source-Url: https://github.com/bparees/debug-cartridge.git
+Cartridge-Vendor: bparees
+Description: "A debug cartridge for development use only."
+Version: '0.1'
+License: "None"
+Vendor: Custom Cartridges INC
+Cartridge-Version: 0.0.1
+Categories:
+  - web_framework
+Provides:
+  - debug
+Cart-Data:
+  - Key: OPENSHIFT_DEBUG
+    Type: environment
+    Description: "An example environment variable using ERB processing"
+Endpoints:
+  - Private-IP-Name:   MY_IP
+    Private-Port-Name: MY_PORT
+    Private-Port:      8081
+    Public-Port-Name:  PROXY_PORT
+    Mappings:
+      - Frontend:      ""
+        Backend:       ""
+        Options:       { websockets: false }
+  - Private-IP-Name:   MY_OTHER_IP
+    Private-Port-Name: MY_OTHER_PORT
+    Private-Port:      8082
+    Public-Port-Name:  PROXY__OTHER_PORT
