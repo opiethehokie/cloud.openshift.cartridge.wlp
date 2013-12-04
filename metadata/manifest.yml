@@ -27,6 +27,8 @@ Endpoints:
     Public-Port-Name:  PROXY_PORT
     Protocols:
       - http
+    Options:
+      primary: true
     Mappings:
       - Frontend:      ""
         Backend:       ""
