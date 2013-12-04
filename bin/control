@@ -31,22 +31,22 @@ function status {
 }
 
 function reload {
-  client_message "debug status"
+  client_message "debug reload"
 }
 function tidy {
-  client_message "debug status"
+  client_message "debug tidy"
 }
 function pre-build {
-  client_message "debug status"
+  client_message "debug pre-build"
 }
 function build {
-  client_message "debug status"
+  client_message "debug build"
 }
 function deploy {
-  client_message "debug status"
+  client_message "debug deploy"
 }
 function post-deploy {
-  client_message "debug status"
+  client_message "debug post-deploy"
 }
 
 function catchall {
@@ -63,7 +63,7 @@ case "$1" in
   pre-build)   pre-build ;;
   build)       build ;;
   deploy)      deploy ;;
-  post-deploy) catchall ;;
+  post-deploy) post-deploy ;;
   *)           exit 0
 esac
 
