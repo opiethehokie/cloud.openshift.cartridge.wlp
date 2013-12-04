@@ -10,7 +10,7 @@ Vendor: Custom Cartridges INC
 Cartridge-Version: 0.0.1
 Scaling:
   Min: 1
-  Max: 2
+  Max: -1
 Categories:
   - web_framework
 Provides:
