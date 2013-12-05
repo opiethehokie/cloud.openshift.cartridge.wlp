@@ -12,7 +12,7 @@ Scaling:
   Min: 1
   Max: -1
 Categories:
-  - web_framework
+#  - web_framework
   - service
 Provides:
   - debug
