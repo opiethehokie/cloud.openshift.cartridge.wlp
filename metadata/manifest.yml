@@ -1,7 +1,7 @@
 Name: debug
 Cartridge-Short-Name: DEBUG
 Display-Name: Debug Cartridge
-#Source-Url: https://github.com/bparees/debug-cartridge.git
+Source-Url: https://github.com/bparees/debug-cartridge.git
 Cartridge-Vendor: bparees
 Description: "A debug cartridge for development use only."
 Version: '0.1'
