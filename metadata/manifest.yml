@@ -1,7 +1,7 @@
 Name: debug
 Cartridge-Short-Name: LIBERTY
 Display-Name: Liberty Cartridge
-Source-Url: https://github.com/bparees/debug-cartridge.git
+Source-Url: https://github.com/bparees/liberty-cartridge.git
 Cartridge-Vendor: bparees
 Description: "A cartridge for WebSphere Liberty server."
 Version: '8.5.5'
