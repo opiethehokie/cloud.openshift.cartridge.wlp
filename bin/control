@@ -1,5 +1,5 @@
 #!/bin/bash -e
-#exit 0
+exit 0
 
 PATH=/bin/:/usr/bin:$PATH
 
