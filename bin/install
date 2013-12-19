@@ -2,4 +2,4 @@
 
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
-client_message "debug install"
+client_message "liberty install"

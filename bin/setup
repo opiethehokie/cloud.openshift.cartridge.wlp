@@ -1,4 +1,4 @@
 #!/bin/bash -e
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
-client_message "debug setup"
+client_message "liberty setup"

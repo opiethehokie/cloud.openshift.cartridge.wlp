@@ -6,24 +6,20 @@ PATH=/bin/:/usr/bin:$PATH
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
 function start {
-    #/usr/sbin/httpd -f $OPENSHIFT_HTTPD_DIR/etc/httpd.conf -k start
-    pushd $OPENSHIFT_REPO_DIR
-    npm install -d
-    npm start -d &
-    client_message "debug cart started"
+    /usr/wlp/bin/server start
+    client_message "liberty cart started"
 }
 
 function stop {
-    #/usr/sbin/httpd -f $OPENSHIFT_HTTPD_DIR/etc/httpd.conf -k stop
-    killall node
-    client_message "debug cart stopped"
+    /usr/wlp/bin/server stop
+    client_message "liberty cart stopped"
 }
 
 function restart {
     #/usr/sbin/httpd -f $OPENSHIFT_HTTPD_DIR/etc/httpd.conf -k restart
     stop
     start
-    client_message "debug cart restarted"
+    client_message "liberty cart restarted"
 }
 
 function status {

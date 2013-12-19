@@ -1,0 +1,17 @@
+********************************************************************************
+product = WebSphere Application Server 8.5.5.1 (wlp-1.0.4.cl50120131011-1639)
+wlp.install.dir = /home/bmp/Downloads/liberty/wlp/
+server.config.dir = /home/rdu/bparees/Downloads/liberty/wlp/usr/servers/defaultServer/
+java.home = /usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.3.0.fc19.x86_64/jre
+java.version = 1.7.0_45
+java.runtime = OpenJDK Runtime Environment (1.7.0_45-mockbuild_2013_10_16_17_47-b00)
+os = Linux (3.11.10-200.fc19.x86_64; amd64) (en_US)
+********************************************************************************
+[12/19/13 14:30:24:920 EST] 00000001 com.ibm.ws.logging.internal.TraceSpecification               I TRAS0018I: The trace state has been changed. The new trace state is *=info.
+[12/19/13 14:30:24:959 EST] 00000001 com.ibm.ws.kernel.launch.internal.FrameworkManager           A CWWKE0001I: The server defaultServer has been launched.
+[12/19/13 14:30:28:801 EST] 00000001 com.ibm.ws.kernel.launch.internal.FrameworkManager           I CWWKE0002I: The kernel started after 4.684 seconds
+[12/19/13 14:30:29:032 EST] 00000015 com.ibm.ws.kernel.feature.internal.FeatureManager            I CWWKF0007I: Feature update started.
+[12/19/13 14:30:30:101 EST] 0000001a com.ibm.ws.tcpchannel.internal.TCPChannel                    I CWWKO0219I: TCP Channel defaultHttpEndpoint has been started and is now listening for requests on host localhost.localdomain  (IPv4: 127.0.0.1) port 9080.
+[12/19/13 14:30:30:269 EST] 0000000d com.ibm.ws.app.manager.internal.monitor.DropinMonitor        A CWWKZ0058I: Monitoring dropins for applications. 
+[12/19/13 14:30:30:296 EST] 00000015 com.ibm.ws.kernel.feature.internal.FeatureManager            I CWWKF0008I: Feature update completed in 1.497 seconds.
+[12/19/13 14:30:30:296 EST] 00000015 com.ibm.ws.kernel.feature.internal.FeatureManager            A CWWKF0011I: The server defaultServer is ready to run a smarter planet.

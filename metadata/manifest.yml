@@ -1,39 +1,24 @@
 Name: debug
-Cartridge-Short-Name: DEBUG
-Display-Name: Debug Cartridge
+Cartridge-Short-Name: LIBERTY
+Display-Name: Liberty Cartridge
 Source-Url: https://github.com/bparees/debug-cartridge.git
 Cartridge-Vendor: bparees
-Description: "A debug cartridge for development use only."
-Version: '0.1'
+Description: "A cartridge for WebSphere Liberty server."
+Version: '8.5.5'
 License: "None"
-Vendor: Custom Cartridges INC
+Vendor: bparees
 Cartridge-Version: 0.0.1
 Scaling:
   Min: 1
   Max: -1
 Categories:
   - web_framework
-    #- service
-Provides:
-  - debug
-Cart-Data:
-  - Key: OPENSHIFT_DEBUG
-    Type: environment
-    Description: "An example environment variable using ERB processing"
 Endpoints:
-  - Private-IP-Name:   MY_IP
-    Private-Port-Name: MY_PORT
-    Private-Port:      8080
+  - Private-IP-Name:   IP
+    Private-Port-Name: PORT
+    Private-Port:      9080
     Public-Port-Name:  PROXY_PORT
-#    Protocols:
-#      - http
-#    Options:
-#      primary: true
     Mappings:
       - Frontend:      ""
         Backend:       ""
         Options:       { websockets: false }
-  - Private-IP-Name:   MY_OTHER_IP
-    Private-Port-Name: MY_OTHER_PORT
-    Private-Port:      8082
-    Public-Port-Name:  PROXY_OTHER_PORT
