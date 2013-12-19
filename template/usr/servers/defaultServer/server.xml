@@ -6,9 +6,10 @@
     </featureManager>
 
     <httpEndpoint id="defaultHttpEndpoint"
-                  host="localhost"
-                  httpPort="9081"
-                  httpsPort="9443" />
+                  host="${host}"
+                  httpPort="${http.port}"
+                  <!--httpsPort="HTTPS_PORT"  -->
+                  />
 
 
 </server>
