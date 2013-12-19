@@ -13,7 +13,7 @@ Scaling:
   Max: -1
 Categories:
   - web_framework
-  - service
+    #- service
 Provides:
   - debug
 Cart-Data:
