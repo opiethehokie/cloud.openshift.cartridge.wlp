@@ -16,7 +16,8 @@ Categories:
 Endpoints:
   - Private-IP-Name:   IP
     Private-Port-Name: PORT
-    Private-Port:      9080
+    # Liberty normally defaults to 9080 but OpenShift doesn't let applications listen on that port within the gear.
+    Private-Port:      8080
     Public-Port-Name:  PROXY_PORT
     Mappings:
       - Frontend:      ""
