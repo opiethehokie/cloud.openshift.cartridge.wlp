@@ -4,3 +4,5 @@ locked_files:
 - env/*
 processed_templates:
 - '**/*.erb'
+build_dependency_dirs:
+- ~/.m2

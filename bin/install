@@ -3,3 +3,9 @@
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
 client_message "liberty install"
+
+cp -r ${OPENSHIFT_LIBERTY_DIR}template/servers ${OPENSHIFT_LIBERTY_DIR}
+mkdir -p ${OPENSHIFT_LIBERTY_DIR}/servers/defaultServer/{apps,dropins}
+pushd $OPENSHIFT_LIBERTY_DIR/template/project/src/main/webapp 1> /dev/null
+  jar cvf ${OPENSHIFT_LIBERTY_DIR}/servers/defaultServer/apps/ROOT.war ./*
+popd 1> /dev/null

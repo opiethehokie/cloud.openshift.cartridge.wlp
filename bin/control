@@ -1,17 +1,16 @@
 #!/bin/bash -e
-exit 0
 
 PATH=/bin/:/usr/bin:$PATH
 
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
 function start {
-    /usr/wlp/bin/server start
+    #/usr/wlp/bin/server start
     client_message "liberty cart started"
 }
 
 function stop {
-    /usr/wlp/bin/server stop
+    #/usr/wlp/bin/server stop
     client_message "liberty cart stopped"
 }
 
@@ -35,12 +34,11 @@ function tidy {
 function pre-build {
   client_message "debug pre-build"
 }
-function build {
-  client_message "debug build"
-}
 function deploy {
   client_message "debug deploy"
+  rsync -r --delete ${OPENSHIFT_REPO_DIR}servers/ ${OPENSHIFT_LIBERTY_DIR}servers/
 }
+
 function post-deploy {
   client_message "debug post-deploy"
 }
@@ -57,7 +55,9 @@ case "$1" in
   reload)      reload ;;
   tidy)        tidy ;;
   pre-build)   pre-build ;;
-  build)       build ;;
+  build)       
+    ${OPENSHIFT_LIBERTY_DIR}/bin/build
+  ;;
   deploy)      deploy ;;
   post-deploy) post-deploy ;;
   *)           exit 0
