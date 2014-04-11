@@ -5,17 +5,17 @@ PATH=/bin/:/usr/bin:$PATH
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
 function start {
-    #/usr/wlp/bin/server start
     client_message "liberty cart started"
+    $OPENSHIFT_LIBERTY_DIR/wlp/bin/server start defaultServer &
 }
 
 function stop {
-    #/usr/wlp/bin/server stop
     client_message "liberty cart stopped"
+    pid=$(cat $OPENSHIFT_LIBERTY_DIR/log/.pid/defaultServer.pid);
+    kill $pid
 }
 
 function restart {
-    #/usr/sbin/httpd -f $OPENSHIFT_HTTPD_DIR/etc/httpd.conf -k restart
     stop
     start
     client_message "liberty cart restarted"
@@ -36,7 +36,7 @@ function pre-build {
 }
 function deploy {
   client_message "debug deploy"
-  rsync -r --delete ${OPENSHIFT_REPO_DIR}servers/ ${OPENSHIFT_LIBERTY_DIR}servers/
+  rsync -r --delete ${OPENSHIFT_REPO_DIR}servers/ ${OPENSHIFT_LIBERTY_DIR}wlp/usr/servers/
 }
 
 function post-deploy {

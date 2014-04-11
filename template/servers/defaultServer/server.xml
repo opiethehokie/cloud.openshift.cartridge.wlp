@@ -1,6 +1,5 @@
 <server description="new server">
 
-    <!-- Enable features -->
     <featureManager>
         <feature>jsp-2.2</feature>
     </featureManager>
@@ -8,8 +7,9 @@
     <httpEndpoint id="defaultHttpEndpoint"
                   host="${host}"
                   httpPort="${http.port}"
-                  <!--httpsPort="HTTPS_PORT"  -->
                   />
+
+    <application id="myapp" name="myapp" type="war" location="ROOT.war" context-root="/" />
 
 
 </server>
