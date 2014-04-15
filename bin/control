@@ -5,20 +5,20 @@ PATH=/bin/:/usr/bin:$PATH
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
 function start {
-    client_message "liberty cart started"
-    $OPENSHIFT_LIBERTY_DIR/wlp/bin/server start defaultServer &
+  $OPENSHIFT_LIBERTY_DIR/wlp/bin/server start defaultServer &
+  client_message "liberty cart started"
 }
 
 function stop {
-    client_message "liberty cart stopped"
-    pid=$(cat $OPENSHIFT_LIBERTY_DIR/log/.pid/defaultServer.pid);
-    kill $pid
+  pid=$(cat $OPENSHIFT_LIBERTY_DIR/log/.pid/defaultServer.pid);
+  kill $pid
+  client_message "liberty cart stopped"
 }
 
 function restart {
-    stop
-    start
-    client_message "liberty cart restarted"
+  stop
+  start
+  client_message "liberty cart restarted"
 }
 
 function status {
@@ -28,15 +28,18 @@ function status {
 function reload {
   client_message "debug reload"
 }
+
 function tidy {
   client_message "debug tidy"
 }
+
 function pre-build {
   client_message "debug pre-build"
 }
+
 function deploy {
-  client_message "debug deploy"
   rsync -r --delete ${OPENSHIFT_REPO_DIR}servers/ ${OPENSHIFT_LIBERTY_DIR}wlp/usr/servers/
+  client_message "liberty cart deployed"
 }
 
 function post-deploy {
@@ -44,7 +47,7 @@ function post-deploy {
 }
 
 function catchall {
-    echo "not yet implemented"
+  echo "not yet implemented"
 }
 
 case "$1" in
