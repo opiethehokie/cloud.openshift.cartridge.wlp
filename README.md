@@ -1,8 +1,5 @@
-#IBM WebSphere Application Server Liberty Cartridge
-
-The liberty-cartridge is an OpenShift cartridge for running applications on IBM's WebSphere Application Server Liberty Profile.
-
-##Usage
+IBM WebSphere Application Server Liberty Cartridge
+==================================================
 
 To deploy applications using the IBM WebSphere Application Server Liberty Cartridge, you are required to accept the IBM Liberty license by following the instructions below:
 
