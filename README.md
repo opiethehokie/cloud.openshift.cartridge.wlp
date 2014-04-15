@@ -1,8 +1,6 @@
 IBM WebSphere Application Server Liberty Cartridge
 ==================================================
 
-<b>Usage</b>
-
 To deploy applications using the IBM WebSphere Application Server Liberty Cartridge, you are required to accept the IBM Liberty license by following the instructions below:
 
 1. Read the current IBM [Liberty-License][].
