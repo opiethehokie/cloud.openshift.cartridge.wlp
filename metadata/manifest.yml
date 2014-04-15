@@ -1,12 +1,9 @@
 Name: liberty
 Cartridge-Short-Name: LIBERTY
 Display-Name: Liberty Cartridge
-Source-Url: https://github.com/bparees/liberty-cartridge.git
 Cartridge-Vendor: bparees
 Description: "A cartridge for WebSphere Liberty server."
 Version: '8.5.5'
-License: "Must accept Liberty license"
-License-Url: http://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/wasdev/downloads/wlp/8.5.5.1/lafiles/runtime/en.html
 Vendor: bparees
 Cartridge-Version: 0.0.1
 Scaling:
