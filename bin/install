@@ -4,28 +4,18 @@ source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
 client_message "liberty install"
 
-core_jar=wlp-beta-runtime-2014.3.0.0.jar
-extended_jar=wlp-beta-extended-2014.3.0.0.jar
-
-if [ ! -f "$OPENSHIFT_LIBERTY_DIR/versions/$core_jar" ]
-then
-  client_message "downloading liberty"
-  wget https://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/wasdev/downloads/wlp/beta/$core_jar -O $OPENSHIFT_TMP_DIR/$core_jar
-  #wget https://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/wasdev/downloads/wlp/beta/$extended_jar -O $OPENSHIFT_TMP_DIR/$extended_jar
-  java -jar $OPENSHIFT_TMP_DIR/$core_jar --acceptLicense $OPENSHIFT_LIBERTY_DIR
-  #java -jar $OPENSHIFT_TMP_DIR/$extended_jar --acceptLicense $OPENSHIFT_LIBERTY_DIR
-else
-  client_message "using cached liberty"
-  java -jar $OPENSHIFT_LIBERTY_DIR/versions/$core_jar --acceptLicense $OPENSHIFT_LIBERTY_DIR
-fi
+#if [ ! -d "$OPENSHIFT_LIBERTY_DIR/usr/wlp" ]; then
+#  client_message "downloading liberty"
+#  $OPENSHIFT_LIBERTY_DIR/bin/cache_liberty $OPENSHIFT_LIBERTY_DIR/usr
+#fi
 
 echo "host=$OPENSHIFT_LIBERTY_IP" >> $OPENSHIFT_LIBERTY_DIR/template/servers/defaultServer/bootstrap.properties
 echo "http.port=$OPENSHIFT_LIBERTY_PORT" >> $OPENSHIFT_LIBERTY_DIR/template/servers/defaultServer/bootstrap.properties
 
-cp -r $OPENSHIFT_LIBERTY_DIR/template/servers $OPENSHIFT_LIBERTY_DIR/wlp/usr/
-mkdir -p $OPENSHIFT_LIBERTY_DIR/wlp/usr/servers/defaultServer/apps
+cp -r $OPENSHIFT_LIBERTY_DIR/template/servers $OPENSHIFT_LIBERTY_DIR/
+mkdir -p $OPENSHIFT_LIBERTY_DIR/servers/defaultServer/{apps,dropins}
 
 pushd $OPENSHIFT_LIBERTY_DIR/template/project/src/main/webapp 1> /dev/null
-  jar cvf ${OPENSHIFT_LIBERTY_DIR}/wlp/usr/servers/defaultServer/apps/ROOT.war ./*
+  jar cvf ${OPENSHIFT_LIBERTY_DIR}/servers/defaultServer/apps/ROOT.war ./*
 popd 1> /dev/null
 

@@ -1,0 +1,12 @@
+#!/bin/bash -e
+
+core_jar=wlp-beta-runtime-2014.3.0.0.jar
+extended_jar=wlp-beta-extended-2014.3.0.0.jar
+
+wget https://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/wasdev/downloads/wlp/beta/$core_jar
+java -jar $core_jar --acceptLicense $1
+rm -rf $core_jar
+
+wget https://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/wasdev/downloads/wlp/beta/$extended_jar
+java -jar $extended_jar --acceptLicense $1
+rm -rf $extended_jar

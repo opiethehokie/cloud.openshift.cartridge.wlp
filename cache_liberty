@@ -1,3 +1,0 @@
-wget https://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/wasdev/downloads/wlp/beta/wlp-beta-extended-2014.3.0.0.jar -O versions/wlp-beta-extended-2014.3.0.0.jar
-
-wget https://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/wasdev/downloads/wlp/beta/wlp-beta-runtime-2014.3.0.0.jar -O versions/wlp-beta-runtime-2014.3.0.0.jar
