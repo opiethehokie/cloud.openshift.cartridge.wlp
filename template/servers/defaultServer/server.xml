@@ -1,7 +1,8 @@
 <server description="new server">
 
     <featureManager>
-        <feature>jsp-2.2</feature>
+        <feature>webProfile-6.0</feature>
+        <feature>jaxrs-1.1</feature>
     </featureManager>
 
     <httpEndpoint id="defaultHttpEndpoint"
