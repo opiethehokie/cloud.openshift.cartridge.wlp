@@ -4,10 +4,10 @@ source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
 client_message "liberty install"
 
-#if [ ! -d "$OPENSHIFT_LIBERTY_DIR/usr/wlp" ]; then
-#  client_message "downloading liberty"
-#  $OPENSHIFT_LIBERTY_DIR/bin/cache_liberty $OPENSHIFT_LIBERTY_DIR/usr
-#fi
+if [ ! -d "$OPENSHIFT_LIBERTY_DIR/wlp" ]; then
+  client_message "downloading liberty"
+  $OPENSHIFT_LIBERTY_DIR/bin/cache_liberty $OPENSHIFT_LIBERTY_DIR
+fi
 
 echo "host=$OPENSHIFT_LIBERTY_IP" >> $OPENSHIFT_LIBERTY_DIR/template/servers/defaultServer/bootstrap.properties
 echo "http.port=$OPENSHIFT_LIBERTY_PORT" >> $OPENSHIFT_LIBERTY_DIR/template/servers/defaultServer/bootstrap.properties

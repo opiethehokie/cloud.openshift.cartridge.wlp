@@ -7,7 +7,7 @@ source $OPENSHIFT_CARTRIDGE_SDK_BASH
 function start {
   if [ "$IBM_LIBERTY_LICENSE" == "L-JTHS-95XRL8" ]
   then
-    $OPENSHIFT_LIBERTY_DIR/usr/wlp/bin/server start defaultServer &
+    $OPENSHIFT_LIBERTY_DIR/wlp/bin/server start defaultServer &
     client_message "liberty cart started"
   else
     client_message "missing liberty license"

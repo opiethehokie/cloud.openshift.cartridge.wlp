@@ -10,7 +10,7 @@ To deploy applications using the IBM WebSphere Application Server Liberty Cartri
 For example:
 
 ```bash
-rhc app-create <app name> bparees-liberty-8.5.5 IBM_LIBERTY_LICENSE=<liberty license code>
+rhc app-create <app name> bparees-liberty-8.5.5 IBM_LIBERTY_LICENSE=<liberty license code> --timeout 300
 ```
 
 [Liberty-License]: http://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/wasdev/downloads/wlp/8.5.5.1/lafiles/runtime//en.html
