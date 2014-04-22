@@ -15,8 +15,11 @@ function start {
 }
 
 function stop {
-  pid=$(cat $OPENSHIFT_LIBERTY_DIR/log/.pid/defaultServer.pid);
-  kill $pid
+  if [ -e $OPENSHIFT_LIBERTY_DIR/servers/.pid/defaultServer.pid ]
+  then
+    pid=$(cat $OPENSHIFT_LIBERTY_DIR/servers/.pid/defaultServer.pid);
+    kill $pid
+  fi
   client_message "liberty cart stopped"
 }
 

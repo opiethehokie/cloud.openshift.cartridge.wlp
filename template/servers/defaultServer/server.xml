@@ -12,5 +12,6 @@
 
     <application id="myapp" name="myapp" type="war" location="ROOT.war" context-root="/" />
 
+    <logging logDirectory="../../log" />
 
 </server>

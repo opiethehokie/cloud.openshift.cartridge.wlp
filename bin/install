@@ -14,6 +14,7 @@ echo "http.port=$OPENSHIFT_LIBERTY_PORT" >> $OPENSHIFT_LIBERTY_DIR/template/serv
 
 cp -r $OPENSHIFT_LIBERTY_DIR/template/servers $OPENSHIFT_LIBERTY_DIR/
 mkdir -p $OPENSHIFT_LIBERTY_DIR/servers/defaultServer/{apps,dropins}
+mkdir -p $OPENSHIFT_LIBERTY_DIR/log
 
 pushd $OPENSHIFT_LIBERTY_DIR/template/project/src/main/webapp 1> /dev/null
   jar cvf ${OPENSHIFT_LIBERTY_DIR}/servers/defaultServer/apps/ROOT.war ./*
