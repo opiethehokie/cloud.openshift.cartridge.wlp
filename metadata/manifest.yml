@@ -11,12 +11,17 @@ Scaling:
   Max: -1
 Categories:
   - web_framework
+  - java
+  - liberty
 Endpoints:
   - Private-IP-Name:   IP
     Private-Port-Name: PORT
     # Liberty normally defaults to 9080 but OpenShift doesn't let applications listen on that port within the gear.
     Private-Port:      8080
     Public-Port-Name:  PROXY_PORT
+    Protocols:
+      - http
+      - https
     Mappings:
       - Frontend:      ""
         Backend:       ""
