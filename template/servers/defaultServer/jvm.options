@@ -1,0 +1,3 @@
+-Xms50m
+-Xmx512m
+-Dcom.ibm.tx.jta.disable2PC=true
