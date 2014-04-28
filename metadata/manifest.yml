@@ -6,7 +6,7 @@ Description: "A cartridge for WebSphere Liberty server."
 Version: '8.5.5'
 Vendor: IBM
 Cartridge-Version: 0.0.1
-Source-Url: git@github.rtp.raleigh.ibm.com:mtpeters-us/liberty-cartridge.git
+Source-Url: git@9.37.205.4:mtpeters-us/liberty-cartridge.git
 Scaling:
   Min: 1
   Max: -1
