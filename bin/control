@@ -18,7 +18,10 @@ function stop {
   if [ -e $OPENSHIFT_LIBERTY_DIR/servers/.pid/defaultServer.pid ]
   then
     pid=$(cat $OPENSHIFT_LIBERTY_DIR/servers/.pid/defaultServer.pid);
-    kill $pid
+    if ps -p $pid > /dev/null
+    then
+      kill $pid
+    fi
   fi
   client_message "liberty cart stopped"
 }
@@ -46,7 +49,7 @@ function pre-build {
 }
 
 function deploy {
-  rsync -r --delete ${OPENSHIFT_REPO_DIR}servers/ ${OPENSHIFT_LIBERTY_DIR}servers/
+  rsync -r ${OPENSHIFT_REPO_DIR}servers/ ${OPENSHIFT_LIBERTY_DIR}servers/
   client_message "liberty cart deployed"
 }
 
