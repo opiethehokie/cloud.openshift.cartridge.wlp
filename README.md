@@ -25,5 +25,12 @@ To add a WAR file to an existing app, there are three options:
 2. Place it in app git repo at servers/defaultServer/apps and delete ROOT.war and configure server.xml (or just replace ROOT.war) and delete the default app template, then git commit.
 3. scp the WAR to apps or dropins in the app's gear at liberty/servers/defaultServer and configure server.xml if necessary.
 
+To install the cartridge into the Origin VM:
+
+1. clone this repository
+2. cd liberty-cartridge
+3. bin/cache_liberty /path/liberty-cartridge (optional step - include Liberty in cartridge so it won't be downloaded at every app-create)
+4. oo-admin-cartridge --action install --source /path/liberty-cartridge
+
 
 [Liberty-License]: http://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/wasdev/downloads/wlp/8.5.5.1/lafiles/runtime//en.html
