@@ -32,7 +32,7 @@ To install the cartridge into the Origin VM:
 3. bin/cache_liberty /path/liberty-cartridge (optional step - include Liberty in cartridge so it won't be downloaded at every app-create)
 4. oo-admin-cartridge --action install --source /path/liberty-cartridge
 
-Example of creating an app with a third-party cartridge (hopefully it would be the same for the Liberty cartridge assuming it was in a public git repo):
+Example of creating an app with a downloadable cartridge (hopefully it would be the same for the Liberty cartridge assuming it was in a public git repo):
 
 ```bash
 rhc create-app nginx http://cartreflect-claytondev.rhcloud.com/reflect?github=gsterjov/openshift-nginx-cartridge
