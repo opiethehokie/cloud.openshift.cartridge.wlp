@@ -15,14 +15,15 @@ Categories:
   - liberty
 Endpoints:
   - Private-IP-Name:   IP
-    Private-Port-Name: PORT
-    # Liberty normally defaults to 9080 but OpenShift doesn't let applications listen on that port within the gear.
+    Private-Port-Name: HTTP_PORT
     Private-Port:      8080
-    Public-Port-Name:  PROXY_PORT
+    Public-Port-Name:  HTTP_PROXY_PORT
+    WebSocket-Port-Name: WEBSOCKET_PORT
+    WebSocket-Port: 8080
     Protocols:
       - http
-      - https
+      - ws
     Mappings:
       - Frontend:      ""
         Backend:       ""
-        Options:       { websockets: false }
+        Options:       { websocket: true }

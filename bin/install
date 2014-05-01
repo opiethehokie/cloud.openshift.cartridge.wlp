@@ -10,7 +10,7 @@ if [ ! -d "$OPENSHIFT_LIBERTY_DIR/usr/wlp" ]; then
 fi
 
 echo "host=$OPENSHIFT_LIBERTY_IP" >> $OPENSHIFT_LIBERTY_DIR/template/servers/defaultServer/bootstrap.properties
-echo "http.port=$OPENSHIFT_LIBERTY_PORT" >> $OPENSHIFT_LIBERTY_DIR/template/servers/defaultServer/bootstrap.properties
+echo "http.port=$OPENSHIFT_LIBERTY_HTTP_PORT" >> $OPENSHIFT_LIBERTY_DIR/template/servers/defaultServer/bootstrap.properties
 
 cp -r $OPENSHIFT_LIBERTY_DIR/template/servers $OPENSHIFT_LIBERTY_DIR/
 mkdir -p $OPENSHIFT_LIBERTY_DIR/servers/defaultServer/{apps,dropins}
