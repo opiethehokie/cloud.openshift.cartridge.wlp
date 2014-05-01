@@ -7,6 +7,9 @@ wget https://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/wasdev/downl
 java -jar $core_jar --acceptLicense $1
 rm -rf $core_jar
 
-#wget https://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/wasdev/downloads/wlp/beta/$extended_jar
-#java -jar $extended_jar --acceptLicense $1
-#rm -rf $extended_jar
+wget https://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/wasdev/downloads/wlp/beta/$extended_jar
+java -jar $extended_jar --acceptLicense $1
+rm -rf $extended_jar
+
+# http://stackoverflow.com/questions/23171735/permission-denied-errors-when-creating-app-with-custom-openshift-cartridge
+chcon -R -u system_u -t bin_t $1
