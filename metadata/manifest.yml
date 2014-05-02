@@ -12,6 +12,7 @@ Scaling:
 Categories:
   - web_framework
   - java
+  - service
   - liberty
 Endpoints:
   - Private-IP-Name:   IP
