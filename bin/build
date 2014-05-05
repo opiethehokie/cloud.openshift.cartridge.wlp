@@ -17,7 +17,7 @@ if `echo $OPENSHIFT_GEAR_DNS | egrep -qe "\.rhcloud\.com"`; then
   fi
 fi
 
-if [ ! -f ${OPENSHIFT_REPO_DIR}project/pom.xml ]; then
+if [ ! -f ${OPENSHIFT_REPO_DIR}pom.xml ]; then
   echo "Skipping Maven build due to absence of pom.xml"
   exit 0
 fi
@@ -40,7 +40,7 @@ OPENSHIFT_MAVEN_XMX="-Xmx${max_heap}m"
 
 export MAVEN_OPTS="$OPENSHIFT_MAVEN_XMX"
 
-pushd ${OPENSHIFT_REPO_DIR}project > /dev/null
+pushd ${OPENSHIFT_REPO_DIR} > /dev/null
 
 if [ -z "$MAVEN_OPTS" ]; then
   export MAVEN_OPTS="$OPENSHIFT_MAVEN_XMX"

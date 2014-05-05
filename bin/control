@@ -1,64 +1,86 @@
 #!/bin/bash -e
 
 PATH=/bin/:/usr/bin:$PATH
-
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
-function start {
-  if [ "$IBM_LIBERTY_LICENSE" == "L-JTHS-95XRL8" ]
+LIBERTY_PID_FILE=$OPENSHIFT_LIBERTY_DIR/servers/.pid/defaultServer.pid
+LIBERTY_LOG_DIR=$OPENSHIFT_LIBERTY_DIR/log
+
+function isrunning() {
+  if [ -f "$LIBERTY_PID_FILE" ]
   then
-    $OPENSHIFT_LIBERTY_DIR/usr/wlp/bin/server start defaultServer &
-    client_message "liberty cart started"
+    pid=$(cat $LIBERTY_PID_FILE);
+    if ps -p $pid 1>&2 > /dev/null
+    then
+      return 0
+    fi
+  fi
+  return 1
+}
+
+function start {
+  if isrunning
+  then
+    echo "app is already running"
   else
-    client_message "missing liberty license"
+    if [ "$IBM_LIBERTY_LICENSE" == "L-JTHS-95XRL8" ]
+    then
+      echo "starting Liberty cartridge"
+      $OPENSHIFT_LIBERTY_DIR/usr/wlp/bin/server start defaultServer 1>&2 > /dev/null &
+    else
+      echo "missing Liberty license"
+    fi
   fi
 }
 
 function stop {
-  if [ -e $OPENSHIFT_LIBERTY_DIR/servers/.pid/defaultServer.pid ]
+  if isrunning
   then
-    pid=$(cat $OPENSHIFT_LIBERTY_DIR/servers/.pid/defaultServer.pid);
-    if ps -p $pid > /dev/null
-    then
-      kill $pid
-    fi
+    pid=$(cat $LIBERTY_PID_FILE);
+    kill $pid
+  else
+    echo "app is not running"
   fi
-  client_message "liberty cart stopped"
 }
 
 function restart {
   stop
+  sleep 2 #TODO start and stop really need to wait for results
   start
-  client_message "liberty cart restarted"
 }
 
 function status {
-  client_message "debug status"
+  if isrunning
+  then
+    client_result "app is running"
+  else
+    client_result "app is stopped"
+  fi
 }
 
 function reload {
-  client_message "debug reload"
+  restart
 }
 
 function tidy {
-  client_message "debug tidy"
-}
-
-function pre-build {
-  client_message "debug pre-build"
+  client_message "deleting Liberty logs in dir: $LIBERTY_LOG_DIR"
+  rm -rf $LIBERTY_LOG_DIR/*
 }
 
 function deploy {
-  rsync -r ${OPENSHIFT_REPO_DIR}servers/ ${OPENSHIFT_LIBERTY_DIR}servers/
-  client_message "liberty cart deployed"
-}
-
-function post-deploy {
-  client_message "debug post-deploy"
-}
-
-function catchall {
-  echo "not yet implemented"
+  echo "Deploying Liberty"
+  if [ -d ${OPENSHIFT_REPO_DIR}/apps ]
+  then
+    rsync -r ${OPENSHIFT_REPO_DIR}/apps/ ${OPENSHIFT_LIBERTY_DIR}/servers/defaultServer/apps/
+  fi
+  if [ -d ${OPENSHIFT_REPO_DIR}/dropins ]
+  then
+    rsync -r ${OPENSHIFT_REPO_DIR}/dropins/ ${OPENSHIFT_LIBERTY_DIR}/servers/defaultServer/dropins/
+  fi
+  if [ -d ${OPENSHIFT_REPO_DIR}/.openshift/config ]
+  then
+    rsync -r ${OPENSHIFT_REPO_DIR}/.openshift/config/ ${OPENSHIFT_LIBERTY_DIR}/servers/defaultServer/
+  fi
 }
 
 case "$1" in
@@ -68,12 +90,10 @@ case "$1" in
   status)      status ;;
   reload)      reload ;;
   tidy)        tidy ;;
-  pre-build)   pre-build ;;
   build)       
     ${OPENSHIFT_LIBERTY_DIR}/bin/build
   ;;
   deploy)      deploy ;;
-  post-deploy) post-deploy ;;
   *)           exit 0
 esac
 

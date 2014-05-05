@@ -1,11 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>libertygroup</groupId>
-	<artifactId>libertyartifact</artifactId>
+	<groupId>{APP_NAME}</groupId>
+	<artifactId>{APP_NAME}</artifactId>
 	<packaging>war</packaging>
 	<version>1.0</version>
-	<name>libertyapp</name>
+	<name>{APP_NAME}</name>
 	<repositories>
 		<repository>
 			<id>eap</id>
@@ -68,11 +68,11 @@
 		<profile>
 			<!-- When built in OpenShift the 'openshift' profile will be used when invoking mvn. -->
 			<!-- Use this profile for any OpenShift specific customization your app will need. -->
-			<!-- By default that is to put the resulting archive into the '../servers/defaultServer/apps' folder. -->
+			<!-- By default that is to put the resulting archive into the 'apps' or 'dropins' folders. -->
 			<!-- http://maven.apache.org/guides/mini/guide-building-for-different-environments.html -->
 			<id>openshift</id>
 			<build>
-				<finalName>libertyapp</finalName>
+				<finalName>{APP_NAME}</finalName>
 				<plugins>
 					<plugin>
 						<artifactId>maven-war-plugin</artifactId>

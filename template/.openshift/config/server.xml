@@ -5,10 +5,7 @@
         <feature>jaxrs-1.1</feature>
     </featureManager>
 
-    <httpEndpoint id="defaultHttpEndpoint"
-                  host="${host}"
-                  httpPort="${http.port}"
-                  />
+    <httpEndpoint id="defaultHttpEndpoint" host="${env.OPENSHIFT_LIBERTY_IP}" httpPort="${env.OPENSHIFT_LIBERTY_HTTP_PORT}" />
 
     <application id="myapp" name="myapp" type="war" location="ROOT.war" context-root="/" />
 
