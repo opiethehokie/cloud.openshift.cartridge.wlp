@@ -2,11 +2,9 @@
 
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
-client_message "liberty install"
-
-if [ ! -d "$OPENSHIFT_LIBERTY_DIR/usr/wlp" ]; then
-  client_message "downloading liberty"
-  $OPENSHIFT_LIBERTY_DIR/bin/cache_liberty $OPENSHIFT_LIBERTY_DIR/usr
+if [ ! -d "$OPENSHIFT_LIBERTY_DIR/wlp" ]; then
+  client_message "downloading Liberty"
+  $OPENSHIFT_LIBERTY_DIR/bin/download_liberty $OPENSHIFT_LIBERTY_DIR
 fi
 
 sed -i "s/{APP_NAME}/${OPENSHIFT_APP_NAME}/g" ${OPENSHIFT_LIBERTY_DIR}/template/pom.xml

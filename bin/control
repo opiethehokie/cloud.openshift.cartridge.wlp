@@ -26,9 +26,9 @@ function start {
     if [ "$IBM_LIBERTY_LICENSE" == "L-JTHS-95XRL8" ]
     then
       echo "starting Liberty cartridge"
-      $OPENSHIFT_LIBERTY_DIR/usr/wlp/bin/server start defaultServer 1>&2 > /dev/null &
+      $OPENSHIFT_LIBERTY_DIR/wlp/bin/server start defaultServer 1>&2 > /dev/null &
     else
-      echo "missing Liberty license"
+      echo "missing Liberty license, set IBM_LIBERTY_LICENSE env var"
     fi
   fi
 }

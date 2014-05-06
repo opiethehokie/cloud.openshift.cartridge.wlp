@@ -1,283 +1,155 @@
-<HTML>
-<HEAD>
-	<TITLE>JBossEAP6.0 JSP snoop page</TITLE>
-	<%@ page import="javax.servlet.http.HttpUtils,java.util.Enumeration" %>
-	<%@ page import="java.lang.management.*" %>
-	<%@ page import="java.util.*" %>
-</HEAD>
-<BODY>
+<%@ page import="java.util.*"%>
+<%@ page import="java.io.*"%>
 
-<H1>WebApp JSP Snoop page</H1>
-<img src="images/jbosscorp_logo.png">
+<%
+    ServletContext context = getServletConfig().getServletContext();
 
-<h2>JVM Memory Monitor</h2>
- 
- 
-<table border="0" width="100%">
- 
-<tbody>
-<tr>
-<td colspan="2" align="center">
-<h3>Memory MXBean</h3>
-</td>
-</tr>
- 
-<tr>
-<td width="200">Heap Memory Usage</td>
-<td>
-<%=ManagementFactory.getMemoryMXBean().getHeapMemoryUsage()%>
-</td>
-</tr>
- 
-<tr>
-<td>Non-Heap Memory Usage</td>
-<td>
-<%=ManagementFactory.getMemoryMXBean().getNonHeapMemoryUsage()%>
-</td>
-</tr>
- 
-<tr>
-<td colspan="2"> </td>
-</tr>
- 
-<tr>
-<td colspan="2" align="center">
-<h3>Memory Pool MXBeans</h3>
-</td>
-</tr>
- 
-</tbody>
+    out.print("<br>");
+    out.print("[<b>Servlet init parameters:" + "</b>]<br>");
+    Enumeration e = getServletConfig().getInitParameterNames();
+    while (e.hasMoreElements()) {
+        String key = (String)e.nextElement();
+        String value = getServletConfig().getInitParameter(key);
+        out.print("   " + key + " = " + value + "<br>");
+    }
+    out.print("<br>");
+
+    out.print("[<b>Context init parameters:" + "</b>]<br>");
+
+    Enumeration enumer = context.getInitParameterNames();
+    while (enumer.hasMoreElements()) {
+        String key = (String)enumer.nextElement();
+            Object value = context.getInitParameter(key);
+            out.print("   " + key + " = " + value + "<br>");
+    }
+    out.print("<br>");
+
+    out.print("[<b>Context attributes:" + "</b>]<br>");
+    enumer = context.getAttributeNames();
+    while (enumer.hasMoreElements()) {
+        String key = (String)enumer.nextElement();
+            Object value = context.getAttribute(key);
+            out.print("   " + key + " = " + value + "<br>");
+    }
+    out.print("<br>");
+
+
+        out.print("[<b>Request attributes:" + "</b>]<br>");
+        e = request.getAttributeNames();
+        while (e.hasMoreElements()) {
+            String key = (String)e.nextElement();
+            Object value = request.getAttribute(key);
+            out.print("   " + key + " = " + value + "<br>");
+        }
+        out.print("<br>");
+        out.print("[<b>Parameter names in this request:" + "</b>]<br>");
+        e = request.getParameterNames();
+        while (e.hasMoreElements()) {
+            String key = (String)e.nextElement();
+            String[] values = request.getParameterValues(key);
+            out.print("   " + key + " = ");
+            for(int i = 0; i < values.length; i++) {
+                out.print(values[i] + " ");
+            }
+            out.print("<br>");
+        }
+        out.print( "<br>");
+        out.print("[<b>Headers in this request: "+ "</b>]<br>");
+        e = request.getHeaderNames();
+        while (e.hasMoreElements()) {
+            String key = (String)e.nextElement();
+            String value = request.getHeader(key);
+            out.print("   " + key + ": " + value + "<br>");
+        }
+        out.print("<br>");
+        out.print("[<b>Cookies in this request:" + "</b>]<br>");
+        Cookie[] cookies = request.getCookies();
+        for (int i = 0; i < (cookies!=null?cookies.length:0); i++) {
+            Cookie cookie = cookies[i];
+            out.println ("   " + cookie.getName() + " = " + cookie.getValue() + "<br>");
+            out.println ("");
+            out.println ("  domain:" + cookie.getDomain() + "<br>");
+            out.println ("  path:" + cookie.getPath() + "<br>");
+            out.println ("  comment:" + cookie.getComment() + "<br>");
+            out.println ("  max age:" + cookie.getMaxAge() + "<br>");
+            out.println ("  secure?:" + cookie.getSecure() + "<br>");
+            out.println ("  version:" + cookie.getVersion() + "<br>");
+            out.println ("");
+        }
+        out.print("<br>");
+
+        out.print("[<b>Misc request information:" + "</b>]<br>");
+        // out.print("Servlet Name: " + getServletConfig().getServletName());
+        out.print("Protocol: " + request.getProtocol() + "<br>");
+        out.print("Scheme: " + request.getScheme() + "<br>");
+        out.print("Server Name: " + request.getServerName() + "<br>");
+        out.print("Server Port: " + request.getServerPort() + "<br>");
+        out.print("Server Info: " + context.getServerInfo() + "<br>");
+        out.print("Remote Addr: " + request.getRemoteAddr() + "<br>");
+        out.print("Remote Host: " + request.getRemoteHost() + "<br>");
+        out.print("Character Encoding: " + request.getCharacterEncoding() + "<br>");
+        out.print("Content Length: " + request.getContentLength() + "<br>");
+        out.print("Content Type: "+ request.getContentType() + "<br>");
+        out.print("Locale: "+ request.getLocale() + "<br>");
+        out.print("Default Response Buffer: "+ response.getBufferSize() + "<br>");
+        out.print("Request Is Secure: " + request.isSecure() + "<br>");
+        out.print("Auth Type: " + request.getAuthType() + "<br>");
+        out.print("HTTP Method: " + request.getMethod() + "<br>");
+        out.print("Remote User: " + request.getRemoteUser() + "<br>");
+        out.print("Request URI: " + request.getRequestURI() + "<br>");
+        out.print("Context Path: " + request.getContextPath() + "<br>");
+        out.print("Servlet Path: " + request.getServletPath() + "<br>");
+        out.print("Path Info: " + request.getPathInfo() + "<br>");
+        out.print("Path Trans: " + request.getPathTranslated() + "<br>");
+        out.print("Query String: " + request.getQueryString() + "<br>");
+
+        out.print("<br>");
+        out.print("[<b>Session info:" + "</b>]<br>");
+       // HttpSession session = request.getSession();
+        out.print("Requested Session Id: " +
+                    request.getRequestedSessionId() + "<br>");
+        out.print("Current Session Id: " + session.getId() + "<br>");
+        out.print("Session Created Time: " + session.getCreationTime() + "<br>");
+        out.print("Session Last Accessed Time: " +
+                    session.getLastAccessedTime() + "<br>");
+        out.print("Session Max Inactive Interval Seconds: " +
+                    session.getMaxInactiveInterval() + "<br>");
+        out.print("<br>");
+        out.print("[<b>Session values: " + "</b>]<br>");
+        Enumeration names = session.getAttributeNames();
+        while (names.hasMoreElements()) {
+            String name = (String) names.nextElement();
+            out.print("   " + name + " = " + session.getAttribute(name) + "<br>");
+        }
+      out.print("<br>");
+      out.print("[<b>Java System Parameters:" + "</b>]<br>");
+      Properties prop = System.getProperties();
+      e = prop.propertyNames();
+      while (e.hasMoreElements()) {
+          String key = (String)e.nextElement();
+          out.print("   " + key + " = " + prop.getProperty(key));
+          out.println("<br>");
+      }
+  %>
+<%
+    Runtime runtime = Runtime.getRuntime();
+%>  
+  <h2>Runtime Data</h2>
+<table>
+    <tr>
+        <td>Number of Processors</td>
+        <td><%=runtime.availableProcessors()%></td>
+    </tr>
+    <tr>
+        <td>Free Memory</td>
+        <td><%=runtime.freeMemory()%></td>
+    </tr>
+    <tr>
+        <td>Max Memory</td>
+        <td><%=runtime.maxMemory()%></td>
+    </tr>
+    <tr>
+        <td>Total Memory</td>
+        <td><%=runtime.totalMemory()%></td>
+    </tr>
 </table>
-<%
-Iterator iter = ManagementFactory.getMemoryPoolMXBeans().iterator();
-while (iter.hasNext()) {
-MemoryPoolMXBean item = (MemoryPoolMXBean) iter.next();
-%>
- 
-<table style="border: 1px #98AAB1 solid;" border="0" width="100%">
- 
-<tbody>
-<tr>
-<td colspan="2" align="center"><strong><%= item.getName() %></strong></td>
-</tr>
- 
-<tr>
-<td width="200">Type</td>
-<td><%= item.getType() %></td>
-</tr>
- 
-<tr>
-<td>Usage</td>
-<td><%= item.getUsage() %></td>
-</tr>
- 
-<tr>
-<td>Peak Usage</td>
-<td><%= item.getPeakUsage() %></td>
-</tr>
- 
-<tr>
-<td>Collection Usage</td>
-<td><%= item.getCollectionUsage() %></td>
-</tr>
- 
-</tbody>
-</table>
- 
- 
-<%
-}
-%>
-
-<H2>Request information</H2>
-
-<TABLE>
-<TR>
-	<TH align=right>Requested URL:</TH>
-	<TD><%= HttpUtils.getRequestURL(request) %></TD>
-</TR>
-<TR>
-	<TH align=right>Request method:</TH>
-	<TD><%= request.getMethod() %></TD>
-</TR>
-<TR>
-	<TH align=right>Request URI:</TH>
-	<TD><%= request.getRequestURI() %></TD>
-</TR>
-<TR>
-	<TH align=right>Request protocol:</TH>
-	<TD><%= request.getProtocol() %></TD>
-</TR>
-<TR>
-	<TH align=right>Servlet path:</TH>
-	<TD><%= request.getServletPath() %></TD>
-</TR>
-<TR>
-	<TH align=right>Path info:</TH>
-	<TD><%= request.getPathInfo() %></TD>
-</TR>
-<TR>
-	<TH align=right>Path translated:</TH>
-	<TD><%= request.getPathTranslated() %></TD>
-</TR>
-<TR>
-	<TH align=right>Query string:</TH>
-	<TD><% if(request.getQueryString()!=null) out.write(request.getQueryString().replaceAll("<", "&lt;").replaceAll(">","&gt;")); %></TD>
-</TR>
-<TR>
-	<TH align=right>Content length:</TH>
-	<TD><%= request.getContentLength() %></TD>
-</TR>
-<TR>
-	<TH align=right>Content type:</TH>
-	<TD><%= request.getContentType() %></TD>
-<TR>
-<TR>
-	<TH align=right>Server name:</TH>
-	<TD><%= request.getServerName() %></TD>
-<TR>
-<TR>
-	<TH align=right>Server port:</TH>
-	<TD><%= request.getServerPort() %></TD>
-<TR>
-<TR>
-	<TH align=right>Remote user:</TH>
-	<TD><%= request.getRemoteUser() %></TD>
-<TR>
-<TR>
-	<TH align=right>Remote address:</TH>
-	<TD><%= request.getRemoteAddr() %></TD>
-<TR>
-<TR>
-	<TH align=right>Remote host:</TH>
-	<TD><%= request.getRemoteHost() %></TD>
-<TR>
-<TR>
-	<TH align=right>Authorization scheme:</TH>
-	<TD><%= request.getAuthType() %></TD>
-<TR>
-</TABLE>
-
-<%
-	Enumeration e = request.getHeaderNames();
-	if(e != null && e.hasMoreElements()) {
-%>
-<H2>Request headers</H2>
-
-<TABLE>
-<TR>
-	<TH align=left>Header:</TH>
-	<TH align=left>Value:</TH>
-</TR>
-<%
-		while(e.hasMoreElements()) {
-			String k = (String) e.nextElement();
-%>
-<TR>
-	<TD><%= k %></TD>
-	<TD><%= request.getHeader(k) %></TD>
-</TR>
-<%
-		}
-%>
-</TABLE>
-<%
-	}
-%>
-
-
-<%
-	e = request.getParameterNames();
-	if(e != null && e.hasMoreElements()) {
-%>
-<H2>Request parameters</H2>
-<TABLE>
-<TR valign=top>
-	<TH align=left>Parameter:</TH>
-	<TH align=left>Value:</TH>
-	<TH align=left>Multiple values:</TH>
-</TR>
-<%
-		while(e.hasMoreElements()) {
-			String k = (String) e.nextElement();
-			String val = request.getParameter(k);
-			String vals[] = request.getParameterValues(k);
-%>
-<TR valign=top>
-	<TD><%= k.replaceAll("<", "&lt;").replaceAll(">","&gt;") %></TD>
-	<TD><%= val.replaceAll("<", "&lt;").replaceAll(">","&gt;") %></TD>
-	<TD><%
-			for(int i = 0; i < vals.length; i++) {
-				if(i > 0)
-					out.print("<BR>");
-				out.print(vals[i].replaceAll("<", "&lt;").replaceAll(">","&gt;"));
-			}
-		%></TD>
-</TR>
-<%
-		}
-%>
-</TABLE>
-<%
-	}
-%>
-
-
-<%
-	e = request.getAttributeNames();
-	if(e != null && e.hasMoreElements()) {
-%>
-<H2>Request Attributes</H2>
-<TABLE>
-<TR valign=top>
-	<TH align=left>Attribute:</TH>
-	<TH align=left>Value:</TH>
-</TR>
-<%
-		while(e.hasMoreElements()) {
-			String k = (String) e.nextElement();
-			Object val = request.getAttribute(k);
-%>
-<TR valign=top>
-	<TD><%= k.replaceAll("<", "&lt;").replaceAll(">","&gt;") %></TD>
-	<TD><%= val.toString().replaceAll("<", "&lt;").replaceAll(">","&gt;") %></TD>
-</TR>
-<%
-		}
-%>
-</TABLE>
-<%
-	}
-%>
-
-
-<%
-	e = getServletConfig().getInitParameterNames();
-	if(e != null && e.hasMoreElements()) {
-%>
-<H2>Init parameters</H2>
-<TABLE>
-<TR valign=top>
-	<TH align=left>Parameter:</TH>
-	<TH align=left>Value:</TH>
-</TR>
-<%
-		while(e.hasMoreElements()) {
-			String k = (String) e.nextElement();
-			String val = getServletConfig().getInitParameter(k);
-%>
-<TR valign=top>
-	<TD><%= k %></TD>
-	<TD><%= val %></TD>
-</TR>
-<%
-		}
-%>
-</TABLE>
-<%
-	}
-%>
-
-</BODY>
-</HTML>
-

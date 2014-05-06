@@ -2,8 +2,8 @@ Name: liberty
 Cartridge-Short-Name: LIBERTY
 Display-Name: Liberty Cartridge
 Cartridge-Vendor: ibm
-Description: "A cartridge for WebSphere Liberty server."
-Version: '8.5.5'
+Description: "A cartridge for IBM WebSphere Application Server Liberty."
+Version: '8.5.5.2'
 Vendor: IBM
 Cartridge-Version: 0.0.1
 Scaling:
