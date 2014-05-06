@@ -11,13 +11,13 @@ To deploy applications using the IBM WebSphere Application Server Liberty Cartri
 Default app example (assuming cartridge is installed):
 
 ```bash
-rhc app-create <app name> ibm-liberty-8.5.5.2 --timeout 300 IBM_LIBERTY_LICENSE=<liberty license code>
+rhc app-create <app name> ibm-liberty-8.5.5.2 IBM_LIBERTY_LICENSE=<liberty license code>
 ```  
 
 App from existing source with a database example (assuming cartridge is installed):
 
 ```bash
-rhc app-create <app name> ibm-liberty-8.5.5.2 postgresql-9.2 --from-code git@github.com:opiethehokie/openshift-acmeair.git --timeout 300 IBM_LIBERTY_LICENSE=<liberty license code>
+rhc app-create <app name> ibm-liberty-8.5.5.2 postgresql-9.2 --from-code https://github.com/opiethehokie/openshift-acmeair.git IBM_LIBERTY_LICENSE=<liberty license code>
 ```  
 
 Example of creating an app with a downloadable cartridge:
