@@ -11,4 +11,6 @@
 
     <logging logDirectory="../../log" />
 
+    <httpDispatcher enableWelcomePage="false" />
+
 </server>
