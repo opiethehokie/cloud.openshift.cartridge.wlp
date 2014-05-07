@@ -28,3 +28,7 @@ Endpoints:
       - Frontend:      ""
         Backend:       ""
         Options:       { websocket: true }
+Subscribes:
+  set-env:
+    Type: ENV:*
+    Required: false
