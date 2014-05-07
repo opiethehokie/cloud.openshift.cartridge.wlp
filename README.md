@@ -8,22 +8,16 @@ To deploy applications using the IBM WebSphere Application Server Liberty Cartri
 2. Extract the `D/N: <License code>` from the Liberty-License.
 3. Set the IBM_LIBERTY_LICENSE environment variable to the extracted license code when you create your application.  
 
-Default app example (assuming cartridge is installed):
+Default app example using OpenShift Origin with cartridge installed:
 
 ```bash
-rhc app-create <app name> ibm-liberty-8.5.5.2 --timeout 300 IBM_LIBERTY_LICENSE=<liberty license code>
-```  
+rhc app-create <app name> ibm-liberty-8.5.5.2 IBM_LIBERTY_LICENSE=<liberty license code>
+```
 
-App from existing source with a database example (assuming cartridge is installed):
-
-```bash
-rhc app-create <app name> ibm-liberty-8.5.5.2 postgresql-9.2 --from-code git@github.com:opiethehokie/openshift-acmeair.git --timeout 300 IBM_LIBERTY_LICENSE=<liberty license code>
-```  
-
-Example of creating an app with a downloadable cartridge:
+Example of creating an app with a downloadable cartridge at OpenShift Online:
 
 ```bash
-rhc create-app <app name> http://cartreflect-claytondev.rhcloud.com/reflect?github=opiethehokie/openshift-liberty-cartridge
+rhc create-app <app name> http://cartreflect-claytondev.rhcloud.com/reflect?github=opiethehokie/openshift-liberty-cartridge postgresql-9.2 -e IBM_LIBERTY_LICENSE=<liberty license code> --from-code https://github.com/opiethehokie/openshift-acmeair.git
 ```  
 
 To add a WAR file to an existing app, there are three options:
