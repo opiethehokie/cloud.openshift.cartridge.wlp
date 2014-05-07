@@ -4,7 +4,7 @@ PATH=/bin/:/usr/bin:$PATH
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
 LIBERTY_PID_FILE=$OPENSHIFT_LIBERTY_DIR/servers/.pid/defaultServer.pid
-LIBERTY_LOG_DIR=$OPENSHIFT_LIBERTY_DIR/log
+LIBERTY_LOG_DIR=${OPENSHIFT_LIBERTY_DIR}log
 
 function isrunning() {
   if [ -f "$LIBERTY_PID_FILE" ]
@@ -84,6 +84,19 @@ function deploy {
   fi
 }
 
+function threaddump() {
+  if ! isrunning
+  then
+    echo "app is stopped"
+    exit 1
+  else
+    dump_file=$LIBERTY_LOG_DIR/threaddump.out
+    pid=$(cat $LIBERTY_PID_FILE);
+    jstack -l $pid >> $dump_file
+    client_result "The thread dump file is available at: $dump_file"
+  fi
+}
+
 case "$1" in
   start)       start ;;
   stop)        stop ;;
@@ -95,6 +108,7 @@ case "$1" in
     ${OPENSHIFT_LIBERTY_DIR}/bin/build
   ;;
   deploy)      deploy ;;
+  threaddump)  threaddump ;;
   *)           exit 0
 esac
 

@@ -32,3 +32,5 @@ Subscribes:
   set-env:
     Type: ENV:*
     Required: false
+Additional-Control-Actions:
+- threaddump
