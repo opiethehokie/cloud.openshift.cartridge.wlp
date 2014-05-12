@@ -14,21 +14,19 @@ To deploy applications using the IBM WebSphere Application Server Liberty Cartri
 
 ## Template Repository Layout
 
-| File                         | Purpose
-| ---------------------------- | --------------------------------------------------------------
-| apps/                        | Location for built applications with server configuartion
-| dropins/                     | Location for built applications without server configuration
-| src/                         | Example Maven source structure
-| pom.xml                      | Example Maven build file
-| .openshift/                  | Location for OpenShift specific files
-| &nbsp;&nbsp;&nbsp;&nbsp;config/ | &nbsp;&nbsp;&nbsp;&nbsp;Location for Liberty configuration files
+| File                                  | Purpose
+| ------------------------------------- | --------------------------------------------------------------
+| apps/ (optional)                      | Location for built applications with server configuartion
+| dropins/ (optional)                   | Location for built applications without server configuration
+| src/                                  | Example Maven source structure
+| pom.xml                               | Example Maven build file
+| .openshift/ (optional)                | Location for OpenShift specific files
+| &nbsp;&nbsp;&nbsp;&nbsp;config/       | &nbsp;&nbsp;&nbsp;&nbsp;Location for Liberty configuration files
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;server.xml | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Server configuration
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bootstrap.properties | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Server bootstrap properties
-| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jvm.options          | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JVM options
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jvm.options | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JVM options
 | &nbsp;&nbsp;&nbsp;&nbsp;action_hooks/ | &nbsp;&nbsp;&nbsp;&nbsp;See the action hooks documentation
-| &nbsp;&nbsp;&nbsp;&nbsp;markers/ | &nbsp;&nbsp;&nbsp;&nbsp;See the Markers section below
-
-Only one of apps/ and dropins/ is needed. Also .openshift/ is not required if the default configuration settings are sufficient.
+| &nbsp;&nbsp;&nbsp;&nbsp;markers/      | &nbsp;&nbsp;&nbsp;&nbsp;See the Markers section below
 
 
 ## Layout and Deployment Options
