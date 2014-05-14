@@ -72,15 +72,15 @@ function deploy {
   echo "Deploying Liberty"
   if [ -d ${OPENSHIFT_REPO_DIR}/apps ]
   then
-    rsync -r ${OPENSHIFT_REPO_DIR}/apps/ ${OPENSHIFT_LIBERTY_DIR}/servers/defaultServer/apps/
+    rsync -r --exclude ".*" ${OPENSHIFT_REPO_DIR}/apps/ ${OPENSHIFT_LIBERTY_DIR}/servers/defaultServer/apps/
   fi
   if [ -d ${OPENSHIFT_REPO_DIR}/dropins ]
   then
-    rsync -r ${OPENSHIFT_REPO_DIR}/dropins/ ${OPENSHIFT_LIBERTY_DIR}/servers/defaultServer/dropins/
+    rsync -r --exclude ".*" ${OPENSHIFT_REPO_DIR}/dropins/ ${OPENSHIFT_LIBERTY_DIR}/servers/defaultServer/dropins/
   fi
   if [ -d ${OPENSHIFT_REPO_DIR}/.openshift/config ]
   then
-    rsync -r ${OPENSHIFT_REPO_DIR}/.openshift/config/ ${OPENSHIFT_LIBERTY_DIR}/servers/defaultServer/
+    rsync -r --exclude ".*" ${OPENSHIFT_REPO_DIR}/.openshift/config/ ${OPENSHIFT_LIBERTY_DIR}/servers/defaultServer/
   fi
 }
 
