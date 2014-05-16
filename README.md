@@ -96,10 +96,10 @@ Default app example using OpenShift Origin with cartridge installed:
 rhc app-create <app name> ibm-liberty-8.5.5.2 IBM_LIBERTY_LICENSE=<liberty license code>
 ```
 
-Example of creating an app (AcmeAir fork) with a downloadable cartridge at OpenShift Online:
+Example of creating a scalable app (AcmeAir fork) with a downloadable cartridge at OpenShift Online:
 
 ```bash
-rhc create-app <app name> http://cartreflect-claytondev.rhcloud.com/reflect?github=opiethehokie/openshift-liberty-cartridge postgresql-9.2 -e IBM_LIBERTY_LICENSE=<liberty license code> --from-code https://github.com/opiethehokie/openshift-acmeair.git --timeout 600
+rhc create-app <app name> http://cartreflect-claytondev.rhcloud.com/reflect?github=opiethehokie/openshift-liberty-cartridge postgresql-9.2 -s -e IBM_LIBERTY_LICENSE=<liberty license code> --from-code https://github.com/opiethehokie/openshift-acmeair.git --timeout 600
 ```
 
 Examples of tailing app logs:
