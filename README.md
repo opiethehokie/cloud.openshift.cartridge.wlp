@@ -25,7 +25,7 @@ To deploy applications using the IBM WebSphere Application Server Liberty Cartri
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;server.xml | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Server configuration
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bootstrap.properties | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Server bootstrap properties
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jvm.options | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JVM options
-| &nbsp;&nbsp;&nbsp;&nbsp;action_hooks/ | &nbsp;&nbsp;&nbsp;&nbsp;See the action hooks documentation
+| &nbsp;&nbsp;&nbsp;&nbsp;action_hooks/ | &nbsp;&nbsp;&nbsp;&nbsp;See the [action hooks documentation][]
 | &nbsp;&nbsp;&nbsp;&nbsp;markers/      | &nbsp;&nbsp;&nbsp;&nbsp;See the Markers section below
 
 
@@ -76,7 +76,7 @@ Adding marker files to .openshift/markers will have the following effects:
 | OPENSHIFT_LIBERTY_IP        | The IP address used to bind Liberty
 | OPENSHIFT_LIBERTY_HTTP_PORT | The Liberty listening port
 
-For more information about environment variables, consult the Users Guide.
+For more information about environment variables, consult the [environment variable documentation][].
 
 
 ## Installing the Cartridge to OpenShift Origin
@@ -88,6 +88,8 @@ For more information about environment variables, consult the Users Guide.
 
 ## rhc Examples
 
+See the [User Guide][] for more details.
+
 Default app example using OpenShift Origin with cartridge installed:
 
 ```bash
@@ -97,7 +99,7 @@ rhc app-create <app name> ibm-liberty-8.5.5.2 IBM_LIBERTY_LICENSE=<liberty licen
 Example of creating an app (AcmeAir fork) with a downloadable cartridge at OpenShift Online:
 
 ```bash
-rhc create-app <app name> http://cartreflect-claytondev.rhcloud.com/reflect?github=opiethehokie/openshift-liberty-cartridge postgresql-9.2 -e IBM_LIBERTY_LICENSE=<liberty license code> --from-code https://github.com/opiethehokie/openshift-acmeair.git
+rhc create-app <app name> http://cartreflect-claytondev.rhcloud.com/reflect?github=opiethehokie/openshift-liberty-cartridge postgresql-9.2 -e IBM_LIBERTY_LICENSE=<liberty license code> --from-code https://github.com/opiethehokie/openshift-acmeair.git --timeout 600
 ```
 
 Examples of tailing app logs:
@@ -117,7 +119,13 @@ rhc tail -f <app name>/log/threaddump.out
 
 ## Developing an Application in Eclipse
 
-TBD
+See [Getting started with PaaS Eclipse integration][]. If you are using OpenShift Online this cartridge will not be available when you are creating an app in Eclipse. Create the app with rhc then use the existing application in Eclipse.
+
+JBoss Tools can co-exist with with WebSphere Development Tools (WDT). The port-forwarding provided by OpenShift provides a way to run the app locally on Liberty while still using your databases in the cloud, or remotely debug an app running in the cloud.
 
 
 [Liberty-License]: http://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/wasdev/downloads/wlp/8.5.5.2/lafiles/runtime/en.html
+[Getting started with PaaS Eclipse integration]: https://www.openshift.com/blogs/getting-started-with-eclipse-paas-integration
+[environment variable documentation]: http://openshift.github.io/documentation/oo_user_guide.html#environment-variables
+[action hooks documentation]: http://openshift.github.io/documentation/oo_user_guide.html#action-hooks
+[User Guide]: http://openshift.github.io/documentation/oo_user_guide.html
