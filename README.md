@@ -51,9 +51,9 @@ Basic workflows for deploying pre-built content (each operation will require ass
 
 3. Add new zipped content and deploy it with specific configuration:
 
-a. cp target/example.war apps/
-
-b. edit server.xml for example.war
+  a. cp target/example.war apps/
+   
+  b. edit server.xml for example.war
 
 
 ## Markers
@@ -66,7 +66,7 @@ Adding marker files to .openshift/markers will have the following effects:
 | skip_maven_build     | Maven build step will be skipped.
 | force_clean_build    | Will start the build process by removing all non-essential Maven dependencies. Any current dependencies specified in your pom.xml file will then be re-downloaded.
 | hot_deploy           | Will prevent a Liberty container restart during build/deployment.
-| disable_auto_scaling | Disables the auto-scaling provided by OpenShift
+| disable_auto_scaling | Disables the auto-scaling provided by OpenShift.
 
 
 ## Environment Variables
