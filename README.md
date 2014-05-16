@@ -9,7 +9,7 @@ To deploy applications using the IBM WebSphere Application Server Liberty Cartri
 
 1. Read the current IBM [Liberty-License][].
 2. Extract the `D/N: <License code>` from the Liberty-License.
-3. Set the IBM_LIBERTY_LICENSE environment variable to the extracted license code when you create your application.
+3. Set the IBM_LIBERTY_LICENSE environment variable to the extracted license code when you create your application (this must be done using the rhc command-line client because the web UI does not provide a way). 
 
 
 ## Template Repository Layout
@@ -53,18 +53,20 @@ Basic workflows for deploying pre-built content (each operation will require ass
 
 a. cp target/example.war apps/
 
-b. edit server.xml
+b. edit server.xml for example.war
 
 
 ## Markers
 
 Adding marker files to .openshift/markers will have the following effects:
 
-| Marker            | Effect
-| ----------------- | --------------------------------------------------
-| skip_maven_build  | Maven build step will be skipped
-| force_clean_build | Will start the build process by removing all non-essential Maven dependencies. Any current dependencies specified in your pom.xml file will then be re-downloaded.
-| hot_deploy        | Will prevent a Liberty container restart during build/deployment.
+| Marker               | Effect
+| -------------------- | --------------------------------------------------
+| enable_jpda          | Enable remote debug of code running inside the Liberty server.
+| skip_maven_build     | Maven build step will be skipped.
+| force_clean_build    | Will start the build process by removing all non-essential Maven dependencies. Any current dependencies specified in your pom.xml file will then be re-downloaded.
+| hot_deploy           | Will prevent a Liberty container restart during build/deployment.
+| disable_auto_scaling | Disables the auto-scaling provided by OpenShift
 
 
 ## Environment Variables
@@ -77,7 +79,14 @@ Adding marker files to .openshift/markers will have the following effects:
 For more information about environment variables, consult the Users Guide.
 
 
-## Usage Examples
+## Installing the Cartridge to OpenShift Origin
+
+1. git clone <cartridge URL>
+2. oo-admin-cartridge --action install --source /path/openshift-liberty-cartridge
+3. rhc cartridges
+
+
+## rhc Examples
 
 Default app example using OpenShift Origin with cartridge installed:
 
@@ -89,7 +98,26 @@ Example of creating an app (AcmeAir fork) with a downloadable cartridge at OpenS
 
 ```bash
 rhc create-app <app name> http://cartreflect-claytondev.rhcloud.com/reflect?github=opiethehokie/openshift-liberty-cartridge postgresql-9.2 -e IBM_LIBERTY_LICENSE=<liberty license code> --from-code https://github.com/opiethehokie/openshift-acmeair.git
-```  
+```
+
+Examples of tailing app logs:
+
+```bash
+rhc tail --opts "-n 50"
+rhc tail -f <app name>/log/ffdc/*
+```
+
+Example of triggering and viewing a thread dump:
+
+```bash
+rhc threaddump
+rhc tail -f <app name>/log/threaddump.out
+```
+
+
+## Developing an Application in Eclipse
+
+TBD
 
 
 [Liberty-License]: http://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/wasdev/downloads/wlp/8.5.5.2/lafiles/runtime/en.html
