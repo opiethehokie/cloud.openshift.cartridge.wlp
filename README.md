@@ -93,7 +93,7 @@ See the [User Guide][] for more details.
 Default app example using OpenShift Origin with cartridge installed:
 
 ```bash
-rhc app-create <app name> ibm-liberty-8.5.5.2 IBM_LIBERTY_LICENSE=<liberty license code>
+rhc app-create <app name> ibm-liberty-8.5.5 IBM_LIBERTY_LICENSE=<liberty license code>
 ```
 
 Example of creating a scalable app (AcmeAir fork) with a downloadable cartridge at OpenShift Online:
