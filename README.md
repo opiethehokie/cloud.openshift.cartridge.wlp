@@ -124,8 +124,38 @@ See [Getting started with PaaS Eclipse integration][]. If you are using OpenShif
 JBoss Tools can co-exist with with WebSphere Development Tools (WDT). The port-forwarding provided by OpenShift provides a way to run the app locally on Liberty while still using your databases in the cloud, or remotely debug an app running in the cloud.
 
 
+## Remote JMX Connections
+
+For the simplest configuration that will work, add the following to your server.xml (replacing "user" and "pass" with your own values):
+
+```xml
+<features>
+    <feature>restConnector-1.0</feature>
+</features>
+
+<quickStartSecurity userName="user" userPassword="pass"/>
+
+<keyStore id="defaultKeyStore" password="Liberty"/>
+
+<webContainer httpsIndicatorHeader="X-Forwarded-Proto" />
+```
+
+This loads the server's JMX REST connector, sets the server's keystore, creates a single administrator user role, and sets the header that indicates a HTTPS connection (because SSL is terminated before the application). See [Configuring secure JMX connection to the Liberty profile][] for more detailed documentation. 
+
+Then run the following commands (replacing the values in <>):
+
+```bash
+rhc scp <app name> download <local dir> <app name>/servers/defaultServer/resources/security/key.jks
+rhc port-forward
+jconsole -J-Djava.class.path="%JAVA_HOME%/lib/jconsole.jar;%JAVA_HOME%/lib/tools.jar;%WLP_HOME%/clients/restConnector.jar" -J-Dcom.ibm.ws.jmx.connector.client.disableURLHostnameVerification=true -J-Djavax.net.ssl.trustStore=<local path>/key.jks -J-Djavax.net.ssl.trustStorePassword=Liberty -J-Djavax.net.ssl.trustStoreType=jks
+```
+
+The URL JConsole is looking for will then be service:jmx:rest://localhost:port/IBMJMXConnectorREST (get port value from rhc port-forward output, the default is 9443) and the user and password are the values you added to your server.xml.
+
+
 [Liberty-License]: http://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/wasdev/downloads/wlp/8.5.5.2/lafiles/runtime/en.html
 [Getting started with PaaS Eclipse integration]: https://www.openshift.com/blogs/getting-started-with-eclipse-paas-integration
 [environment variable documentation]: http://openshift.github.io/documentation/oo_user_guide.html#environment-variables
 [action hooks documentation]: http://openshift.github.io/documentation/oo_user_guide.html#action-hooks
 [User Guide]: http://openshift.github.io/documentation/oo_user_guide.html
+[Configuring secure JMX connection to the Liberty profile]: http://www-01.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.wlp.nd.doc/ae/twlp_admin_restconnector.html?cp=SSAW57_8.5.5%2F1-3-11-0-3-3-9-1&lang=en
