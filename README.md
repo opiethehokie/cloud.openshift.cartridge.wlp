@@ -152,6 +152,8 @@ jconsole -J-Djava.class.path="%JAVA_HOME%/lib/jconsole.jar;%JAVA_HOME%/lib/tools
 
 The URL JConsole is looking for will then be service:jmx:rest://localhost:port/IBMJMXConnectorREST (get port value from rhc port-forward output, the default is 9443) and the user and password are the values you added to your server.xml.
 
+If the application is scaled you can list the gears with "rhc app show \<app name\> --gears". Then for the secondary gears you'll have to use regular scp (not rhc scp) to get key.jks from the listed SSH URL and use "rhc port-forward -g \<gear id\>".
+
 
 [Liberty-License]: http://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/wasdev/downloads/wlp/8.5.5.2/lafiles/runtime/en.html
 [Getting started with PaaS Eclipse integration]: https://www.openshift.com/blogs/getting-started-with-eclipse-paas-integration
