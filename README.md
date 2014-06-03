@@ -31,29 +31,41 @@ To deploy applications using the IBM WebSphere Application Server Liberty Cartri
 
 ## Layout and Deployment Options
 
-There are two options for deploying applications on Liberty in OpenShift. They can be used together.
+There are three options for deploying applications on Liberty in OpenShift. 1 and 2 can be used together.
 
 ### Method 1
 
 You can upload your content in a Maven src structure as is this sample project and on git push have the application built and deployed. For this to work you'll need your pom.xml at the root of your repository and a maven-war-plugin like in this sample to move the output from the build to the apps/ or dropins/ directories. By default the warName is ROOT within pom.xml, the WAR is moved to apps/, and the context-root is /.
 
-A WAR in apps/ needs to be configured in server.xml (where the context-root is configurable), see sample pom.xml and server.xml. A WAR in dropins/ does not need any additional configuration and the context-root for a file app_name.war will be /app_name.
+A WAR in apps/ needs to be configured in server.xml, see the sample pom.xml and server.xml. A WAR in dropins/ does not need any additional configuration and the context-root for a file app_name.war will be /app_name.
 
 ### Method 2
 
-You can git push pre-built wars into apps/ or dropins/. To do this with the default repo you'll want to first run "git rm -r src/ pom.xml" from the root of your repo.
+You can git push pre-built WARs into apps/ or dropins/. These can co-exist with an app deployed using method 1 as long as the artifact names do not conflict (if there is a conflict method 2 wins).
 
 Basic workflows for deploying pre-built content (each operation will require associated git add/commit/push operations to take effect):
 
 1. Add new zipped content and deploy it: cp target/example.war dropins/
 
-2. Undeploy currently deployed content: git rm dropins/example.war
+2. Undeploy currently deployed content: git rm dropins/old.war
 
 3. Add new zipped content and deploy it with specific configuration:
 
-  a. cp target/example.war apps/
+  a. Run: cp target/example.war apps/
    
-  b. edit server.xml for example.war
+  b. Edit server.xml for example.war
+
+### Method 3
+
+You can git push a Liberty server package for the server defaultServer. Look at the template server.xml for an example of configuring the host and port. Basic workflows for deploying server packages (each operation will require associated git add/commit/push operations to take effect):
+
+1. Add new zipped content and deploy it:
+
+  a. Run: wlp/bin/server package --include=usr
+
+  b. Run: cp wlp/usr/servers/defaultServer/defaultServer.zip ./
+
+  c. Consider deleting any other app files and the .openshift directory because they will be overriden by the server package
 
 
 ## Markers

@@ -78,17 +78,26 @@ function tidy {
 
 function deploy {
   echo "Deploying Liberty"
-  if [ -d ${OPENSHIFT_REPO_DIR}/apps ]
-  then
-    rsync -r --exclude ".*" ${OPENSHIFT_REPO_DIR}/apps/ ${OPENSHIFT_LIBERTY_DIR}/servers/defaultServer/apps/
-  fi
-  if [ -d ${OPENSHIFT_REPO_DIR}/dropins ]
-  then
-    rsync -r --exclude ".*" ${OPENSHIFT_REPO_DIR}/dropins/ ${OPENSHIFT_LIBERTY_DIR}/servers/defaultServer/dropins/
-  fi
+  # normal openshift mode, like template app
   if [ -d ${OPENSHIFT_REPO_DIR}/.openshift/config ]
   then
     rsync -r --exclude ".*" ${OPENSHIFT_REPO_DIR}/.openshift/config/ ${OPENSHIFT_LIBERTY_DIR}/servers/defaultServer/
+  fi
+  # server directory hybrid with .openshift
+  if [ -d ${OPENSHIFT_REPO_DIR}/apps ]
+  then
+    rsync -r --delete --exclude ".*" ${OPENSHIFT_REPO_DIR}/apps/ ${OPENSHIFT_LIBERTY_DIR}/servers/defaultServer/apps/
+  fi
+  if [ -d ${OPENSHIFT_REPO_DIR}/dropins ]
+  then
+    rsync -r --delete --exclude ".*" ${OPENSHIFT_REPO_DIR}/dropins/ ${OPENSHIFT_LIBERTY_DIR}/servers/defaultServer/dropins/
+  fi
+  # server package
+  if [ -e ${OPENSHIFT_REPO_DIR}/defaultServer.zip ]
+  then
+    rm -rf ${OPENSHIFT_TMP_DIR}/wlp
+    unzip ${OPENSHIFT_REPO_DIR}/defaultServer.zip -d ${OPENSHIFT_TMP_DIR}
+    rsync -r --delete ${OPENSHIFT_TMP_DIR}/wlp/usr/servers/defaultServer/ ${OPENSHIFT_LIBERTY_DIR}/servers/defaultServer/
   fi
 }
 
