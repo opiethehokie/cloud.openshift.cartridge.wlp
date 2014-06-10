@@ -17,7 +17,7 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
-                <!--<repository>
+                <repository>
                         <id>wlp.central</id>
                         <url>http://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/wasdev/maven/repository</url>
                         <releases>
@@ -26,7 +26,7 @@
                         <snapshots>
                                 <enabled>false</enabled>
                         </snapshots>
-                </repository>-->
+                </repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
@@ -42,8 +42,8 @@
 	</pluginRepositories>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>1.6</maven.compiler.source>
-		<maven.compiler.target>1.6</maven.compiler.target>
+		<maven.compiler.source>1.7</maven.compiler.source>
+		<maven.compiler.target>1.7</maven.compiler.target>
 	</properties>
 	<dependencies>
                 <dependency>
@@ -52,17 +52,20 @@
                         <version>3.0.1</version>
                         <scope>provided</scope>
                 </dependency>
-		<!--<dependency>
+                <!-- example DB driver from redhat repository
+		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<version>9.2-1003-jdbc4</version>
-		</dependency>-->
-                <!--<dependency>
+                        <scope>provided</scope>
+		</dependency> -->
+                <!-- example jar from liberty repository
+                <dependency>
                         <groupId>com.ibm.websphere.appserver.api</groupId>
                         <artifactId>com.ibm.websphere.appserver.api.jaxrs</artifactId>
                         <version>1.0</version>
                         <scope>provided</scope>
-                </dependency>-->
+                </dependency> -->
 	</dependencies>
 	<profiles>
 		<profile>

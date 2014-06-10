@@ -4,7 +4,6 @@ PATH=/bin/:/usr/bin:$PATH
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
 LIBERTY_PID_FILE=$OPENSHIFT_LIBERTY_DIR/servers/.pid/defaultServer.pid
-LIBERTY_LOG_DIR=${OPENSHIFT_LIBERTY_DIR}log
 
 function isrunning() {
   if [ -f "$LIBERTY_PID_FILE" ]
@@ -15,6 +14,21 @@ function isrunning() {
       return 0
     fi
   fi
+  return 1
+}
+
+function ishttpup() {
+  count=0
+  while [ ${count} -lt 10 ]
+  do
+    if lsof -P -n -i "@${OPENSHIFT_LIBERTY_IP}:${OPENSHIFT_LIBERTY_HTTP_PORT}" | grep "(LISTEN)" > /dev/null
+    then
+      echo "Found ${OPENSHIFT_LIBERTY_IP}:${OPENSHIFT_LIBERTY_HTTP_PORT} listening port"
+      return 0
+    fi
+    let count=${count}+1
+    sleep 2
+  done
   return 1
 }
 
@@ -33,6 +47,13 @@ function start {
       else
         echo "starting Liberty cartridge"
         $OPENSHIFT_LIBERTY_DIR/wlp/bin/server start defaultServer 1>&2 > /dev/null &
+      fi
+      rc=0
+      ishttpup || rc=$?
+      if [ $rc -eq 1 ]
+      then
+        echo "Timed out waiting for http listening port for Liberty"
+        exit 1
       fi
     else
       echo "missing Liberty license, set IBM_LIBERTY_LICENSE env var"
@@ -54,7 +75,7 @@ function stop {
 
 function restart {
   stop
-  sleep 2 #TODO start and stop really need to wait for results
+  sleep 5 # wait for port to be released
   start
 }
 
@@ -72,8 +93,8 @@ function reload {
 }
 
 function tidy {
-  client_message "deleting Liberty logs in dir: $LIBERTY_LOG_DIR"
-  rm -rf $LIBERTY_LOG_DIR/*
+  client_message "deleting Liberty logs in dir: $OPENSHIFT_LIBERTY_LOG_DIR"
+  rm -rf $OPENSHIFT_LIBERTY_LOG_DIR/*
 }
 
 function deploy {
@@ -113,7 +134,7 @@ function threaddump() {
     echo "app is stopped"
     exit 1
   else
-    dump_file=$LIBERTY_LOG_DIR/threaddump.out
+    dump_file=$OPENSHIFT_LIBERTY_LOG_DIR/threaddump.out
     pid=$(cat $LIBERTY_PID_FILE);
     jstack -l $pid >> $dump_file
     client_result "The thread dump file is available at: $dump_file"
