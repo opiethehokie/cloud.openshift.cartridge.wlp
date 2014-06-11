@@ -78,24 +78,30 @@ Adding marker files to .openshift/markers will have the following effects:
 | skip_maven_build     | Maven build step will be skipped.
 | force_clean_build    | Will start the build process by removing all non-essential Maven dependencies. Any current dependencies specified in your pom.xml file will then be re-downloaded.
 | hot_deploy           | Will prevent a Liberty container restart during build/deployment.
+| clean_start          | Cleans all cached information related to your server instance at the next server start
 | disable_auto_scaling | Disables the auto-scaling provided by OpenShift.
 
 
 ## Environment Variables
 
-| Variable                    | Description    
-| --------------------------- | ----------------------------------------
-| OPENSHIFT_LIBERTY_IP        | The IP address used to bind Liberty
-| OPENSHIFT_LIBERTY_HTTP_PORT | The Liberty listening port
+| Variable                      | Description    
+| ----------------------------- | ----------------------------------------
+| OPENSHIFT_LIBERTY_IP          | The IP address used to bind Liberty
+| OPENSHIFT_LIBERTY_HTTP_PORT   | The Liberty listening port
+| OPENSHIFT_LIBERTY_LOG_DIR     | Where Liberty logs can be written so "rhc tail" will find them
+| OPENSHIFT_LIBERTY_TRANLOG_DIR | Persistent directory where Liberty can write the transaction recovery log
 
-For more information about environment variables, consult the [environment variable documentation][].
+These are mainly useful in the server.xml file. For more information about OpenShift environment variables, consult the [environment variable documentation][].
 
 
 ## Installing the Cartridge to OpenShift Origin
 
 1. git clone <cartridge URL>
 2. oo-admin-cartridge --action install --source /path/openshift-liberty-cartridge
-3. rhc cartridges
+3. [Clear the broker application cache][]:
+  a. cd /var/www/openshift/broker
+  b. bundle exec rake tmp:clear
+4. rhc cartridges
 
 
 ## rhc Examples
@@ -118,14 +124,14 @@ Examples of tailing app logs:
 
 ```bash
 rhc tail --opts "-n 50"
-rhc tail -f <app name>/log/ffdc/*
+rhc tail -f liberty/log/ffdc/*
 ```
 
 Example of triggering and viewing a thread dump:
 
 ```bash
 rhc threaddump
-rhc tail -f <app name>/log/threaddump.out
+rhc tail -f liberty/log/threaddump.out
 ```
 
 
@@ -157,7 +163,7 @@ This loads the server's JMX REST connector, sets the server's keystore, creates 
 Then run the following commands (replacing the values in <>):
 
 ```bash
-rhc scp <app name> download <local dir> <app name>/servers/defaultServer/resources/security/key.jks
+rhc scp <app name> download <local dir> liberty/servers/defaultServer/resources/security/key.jks
 rhc port-forward
 jconsole -J-Djava.class.path="%JAVA_HOME%/lib/jconsole.jar;%JAVA_HOME%/lib/tools.jar;%WLP_HOME%/clients/restConnector.jar" -J-Dcom.ibm.ws.jmx.connector.client.disableURLHostnameVerification=true -J-Djavax.net.ssl.trustStore=<local path>/key.jks -J-Djavax.net.ssl.trustStorePassword=Liberty -J-Djavax.net.ssl.trustStoreType=jks
 ```
@@ -173,3 +179,4 @@ If the application is scaled you can list the gears with "rhc app show \<app nam
 [action hooks documentation]: http://openshift.github.io/documentation/oo_user_guide.html#action-hooks
 [User Guide]: http://openshift.github.io/documentation/oo_user_guide.html
 [Configuring secure JMX connection to the Liberty profile]: http://www-01.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.wlp.nd.doc/ae/twlp_admin_restconnector.html?cp=SSAW57_8.5.5%2F1-3-11-0-3-3-9-1&lang=en
+[Clear the broker application cache]: http://openshift.github.io/documentation/oo_administration_guide.html#clear-the-broker-application-cache

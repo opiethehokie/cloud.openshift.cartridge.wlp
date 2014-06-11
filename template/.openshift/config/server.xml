@@ -11,7 +11,7 @@
 
     <httpDispatcher enableWelcomePage="false" />
 
-    <transaction transactionLogDirectory="${env.OPENSHIFT_DATA_DIR}" />
+    <transaction transactionLogDirectory="${env.OPENSHIFT_LIBERTY_TRANLOG_DIR}" />
 
     <application id="myapp" name="myapp" type="war" location="ROOT.war" context-root="/" />
 

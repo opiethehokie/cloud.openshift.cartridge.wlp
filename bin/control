@@ -39,14 +39,19 @@ function start {
   else
     if [ "$IBM_LIBERTY_LICENSE" == "L-JTHS-95XRL8" ]
     then
+      opts=""
+      if marker_present "clean_start"
+      then
+        opts="--clean"
+      fi
       if marker_present "enable_jpda"
       then
         echo "starting Liberty cartridge in debug mode"
-        $OPENSHIFT_LIBERTY_DIR/wlp/bin/server debug defaultServer 1>&2 > /dev/null &
+        $OPENSHIFT_LIBERTY_DIR/wlp/bin/server debug defaultServer $opts 1>&2 > /dev/null &
         echo $! > $LIBERTY_PID_FILE
       else
         echo "starting Liberty cartridge"
-        $OPENSHIFT_LIBERTY_DIR/wlp/bin/server start defaultServer 1>&2 > /dev/null &
+        $OPENSHIFT_LIBERTY_DIR/wlp/bin/server start defaultServer $opts 1>&2 > /dev/null &
       fi
       rc=0
       ishttpup || rc=$?
@@ -93,8 +98,10 @@ function reload {
 }
 
 function tidy {
-  client_message "deleting Liberty logs in dir: $OPENSHIFT_LIBERTY_LOG_DIR"
+  client_message "deleting Liberty logs in default dir: $OPENSHIFT_LIBERTY_LOG_DIR"
   rm -rf $OPENSHIFT_LIBERTY_LOG_DIR/*
+  client_message "deleting Liberty transaction logs in default dir: $OPENSHIFT_LIBERTY_TRANLOG_DIR"
+  rm -rf $OPENSHIFT_LIBERTY_TRANLOG_DIR/*
 }
 
 function deploy {
