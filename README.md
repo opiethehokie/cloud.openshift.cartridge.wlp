@@ -99,8 +99,11 @@ These are mainly useful in the server.xml file. For more information about OpenS
 1. git clone <cartridge URL>
 2. oo-admin-cartridge --action install --source /path/openshift-liberty-cartridge
 3. [Clear the broker application cache][]:
+
   a. cd /var/www/openshift/broker
+
   b. bundle exec rake tmp:clear
+  
 4. rhc cartridges
 
 
