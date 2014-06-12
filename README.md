@@ -57,7 +57,7 @@ Basic workflows for deploying pre-built content (each operation will require ass
 
 ### Method 3
 
-You can git push a Liberty server package for the server defaultServer. Look at the template server.xml for an example of configuring the host and port. Basic workflows for deploying server packages (each operation will require associated git add/commit/push operations to take effect):
+You can git push a Liberty server package for the server defaultServer. Look at the template server.xml for an example of configuring the host and port with environment variables. Also put the "command.port=-1" from the template booststrap.properties in your bootstrap.properties. Basic workflows for deploying server packages (each operation will require associated git add/commit/push operations to take effect):
 
 1. Add new zipped content and deploy it:
 
@@ -65,7 +65,7 @@ You can git push a Liberty server package for the server defaultServer. Look at 
 
   b. Run: cp wlp/usr/servers/defaultServer/defaultServer.zip ./
 
-  c. Consider deleting any other app files and the .openshift directory because they will be overriden by the server package
+  c. Consider deleting any other app files and the .openshift directory in your git repository because they will be overriden by the server package when deployed
 
 
 ## Markers

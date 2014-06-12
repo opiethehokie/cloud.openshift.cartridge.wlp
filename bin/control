@@ -126,8 +126,6 @@ function deploy {
     rm -rf ${OPENSHIFT_TMP_DIR}/wlp
     unzip ${OPENSHIFT_REPO_DIR}/defaultServer.zip -d ${OPENSHIFT_TMP_DIR}
     rsync -r --delete ${OPENSHIFT_TMP_DIR}/wlp/usr/servers/defaultServer/ ${OPENSHIFT_LIBERTY_DIR}/servers/defaultServer/
-    # server won't start without this
-    echo "command.port=-1" >> ${OPENSHIFT_LIBERTY_DIR}/servers/defaultServer/bootstrap.properties
     # cleanup
     rm -rf ${OPENSHIFT_LIBERTY_DIR}/servers/defaultServer/logs
     rm -rf ${OPENSHIFT_LIBERTY_DIR}/servers/defaultServer/workarea
