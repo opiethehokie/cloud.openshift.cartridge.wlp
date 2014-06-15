@@ -19,7 +19,7 @@ function isrunning() {
 
 function ishttpup() {
   count=0
-  while [ ${count} -lt 10 ]
+  while [ ${count} -lt 64 ]
   do
     if lsof -P -n -i "@${OPENSHIFT_LIBERTY_IP}:${OPENSHIFT_LIBERTY_HTTP_PORT}" | grep "(LISTEN)" > /dev/null
     then
