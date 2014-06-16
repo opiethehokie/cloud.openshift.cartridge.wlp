@@ -144,6 +144,15 @@ See [Getting started with PaaS Eclipse integration][]. If you are using OpenShif
 
 JBoss Tools can co-exist with with WebSphere Development Tools (WDT). The port-forwarding provided by OpenShift provides a way to run the app locally on Liberty while still using your databases in the cloud, or remotely debug an app running in the cloud.
 
+The [openshift-jrebel-cartridge][] also works with this cartridge after some minor configuration. The openshift-jrebel-cartridge sets the JAVA_OPTS environment variable which Liberty doesn't automatically recognize, so you can copy the properties from that environment variable to your application's .openshift/config/jvm.options file instead. You'll end up with something like:
+
+```
+-javaagent:/var/lib/openshift/<gear id>/jrebel/jar/jrebel.jar
+-Drebel.log=true
+-Drebel.log.file=/var/lib/openshift/<gear id>/jrebel/log/jrebel.log
+-Drebel.remoting_plugin=true
+```
+
 
 ## Remote JMX Connections
 
@@ -183,3 +192,4 @@ If the application is scaled you can list the gears with "rhc app show \<app nam
 [User Guide]: http://openshift.github.io/documentation/oo_user_guide.html
 [Configuring secure JMX connection to the Liberty profile]: http://www-01.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.wlp.nd.doc/ae/twlp_admin_restconnector.html?cp=SSAW57_8.5.5%2F1-3-11-0-3-3-9-1&lang=en
 [Clear the broker application cache]: http://openshift.github.io/documentation/oo_administration_guide.html#clear-the-broker-application-cache
+[openshift-jrebel-cartridge]: https://github.com/openshift-cartridges/openshift-jrebel-cartridge
