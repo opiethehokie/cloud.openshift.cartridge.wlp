@@ -153,6 +153,12 @@ The [openshift-jrebel-cartridge][] also works with this cartridge after some min
 -Drebel.remoting_plugin=true
 ```
 
+Or set the JVM_ARGS environment variable to the value of the JAVA_OPTS environment variable which would look something like this:
+
+```bash
+rhc set-env JVM_ARGS="-javaagent:/var/lib/openshift/<gear id>/jrebel/jar/jrebel.jar -Drebel.log=true -Drebel.log.file=/var/libopenshift/<gear id>/jrebel/log/jrebel.log -Drebel.remoting_plugin=true"
+```
+
 
 ## Remote JMX Connections
 
