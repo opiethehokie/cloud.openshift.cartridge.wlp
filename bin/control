@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash
 
 PATH=/bin/:/usr/bin:$PATH
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
@@ -23,34 +23,9 @@ function isrunning() {
   return 1
 }
 
-function start() {
-  # create env that buildpack expects
-  export PORT=$OPENSHIFT_LIBERTY_HTTP_PORT
-  export VCAP_APPLICATION={\"host\":\"$OPENSHIFT_LIBERTY_IP\"}
-  # build droplet that contains everything needed to run app
-  out=$($OPENSHIFT_LIBERTY_BUILDPACK_DIR/bin/compile $OPENSHIFT_LIBERTY_DROPLET_DIR $OPENSHIFT_LIBERTY_CACHE_DIR)
-  echo $out
-  # metadata indicating how script should be executed
-  metadata=$($OPENSHIFT_LIBERTY_BUILDPACK_DIR/bin/release $OPENSHIFT_LIBERTY_DROPLET_DIR)
-  echo $metadata
-  # only way server will start on openshift is with command port disabled
-  echo "command.port=-1" >> $server_dir/bootstrap.properties
-  # fix host - in openshift we need specific host
-  sed -i 's/host="\*"/host="${host}"/g' $server_dir/server.xml
-  # actually start server
-  #TODO use output of release phase
-  $liberty_dir/create_vars.rb $server_dir/runtime-vars.xml
-  JAVA_HOME=$java_dir $liberty_dir/bin/server start $server_name 1>&2 > /dev/null &
-}
-
 function stop() {
   #TODO
   echo
-}
-
-function restart() {
-  stop
-  start
 }
 
 function status() {
@@ -97,6 +72,64 @@ function tidy() {
 function threaddump() {
   #TODO
   echo
+}
+
+function create_credentials() {
+  echo "\"credentials\":{\"user\":\"$1\",\"password\":\"$2\",\"host\":\"$3\",\"port\":\"$4\",\"name\":\"$5\",\"uri\":\"$6\"}"
+}
+
+function create_vcap_services() {
+  var="{"
+  # postgresql 9.2
+  if [ -n "$OPENSHIFT_POSTGRESQL_DB_HOST" ]
+  then
+    label="postgresql"
+    creds=$(create_credentials $OPENSHIFT_POSTGRESQL_DB_USERNAME $OPENSHIFT_POSTGRESQL_DB_PASSWORD $OPENSHIFT_POSTGRESQL_DB_HOST $OPENSHIFT_POSTGRESQL_DB_PORT $OPENSHIFT_APP_NAME $OPENSHIFT_POSTGRESQL_DB_URL)
+    var+="\"$label\":[{\"name\":\"my$label\",\"label\":\"$label\",\"tags\":[\"$label\"],$creds}],"
+  fi
+  # mysql 5.1 or mariadb 5.5
+  if [ -n "$OPENSHIFT_MYSQL_DB_HOST" ]
+  then
+    label="mysql"
+    creds=$(create_credentials $OPENSHIFT_MYSQL_DB_USERNAME $OPENSHIFT_MYSQL_DB_PASSWORD $OPENSHIFT_MYSQL_DB_HOST $OPENSHIFT_MYSQL_DB_PORT $OPENSHIFT_APP_NAME $OPENSHIFT_MYSQL_DB_URL)
+    var+="\"$label\":[{\"name\":\"my$label\",\"label\":\"$label\",\"tags\":[\"$label\"],$creds}],"
+  fi
+  # mongodb 2.2
+  if [ -n "$OPENSHIFT_MONGODB_DB_HOST" ]
+  then
+    label="mongodb"
+    creds=$(create_credentials $OPENSHIFT_MONGODB_DB_USERNAME $OPENSHIFT_MONGODB_DB_PASSWORD $OPENSHIFT_MONGODB_DB_HOST $OPENSHIFT_MONGODB_DB_PORT $OPENSHIFT_APP_NAME $OPENSHIFT_MONGODB_DB_URL)
+    var+="\"$label\":[{\"name\":\"my$label\",\"label\":\"$label\",\"tags\":[\"$label\"],$creds}],"
+  fi
+  var="$var}"
+  echo $var
+}
+
+function start() {
+  # create env that buildpack expects
+  export PORT=$OPENSHIFT_LIBERTY_HTTP_PORT
+  export VCAP_APPLICATION={\"host\":\"$OPENSHIFT_LIBERTY_IP\"}
+  export VCAP_SERVICES=$(create_vcap_services)
+  echo "generated VCAP_SERVICES=$VCAP_SERVICES"
+  # build droplet that contains everything needed to run app
+  out=$($OPENSHIFT_LIBERTY_BUILDPACK_DIR/bin/compile $OPENSHIFT_LIBERTY_DROPLET_DIR $OPENSHIFT_LIBERTY_CACHE_DIR)
+  echo $out
+  # metadata indicating how script should be executed
+  metadata=$($OPENSHIFT_LIBERTY_BUILDPACK_DIR/bin/release $OPENSHIFT_LIBERTY_DROPLET_DIR)
+  echo $metadata
+  # only way server will start on openshift is with command port disabled
+  echo "command.port=-1" >> $server_dir/bootstrap.properties
+  # fix host - in openshift we need specific host
+  sed -i 's/host="\*"/host="${host}"/g' $server_dir/server.xml
+  # actually start server
+  #TODO use output of release phase
+  $liberty_dir/create_vars.rb $server_dir/runtime-vars.xml
+  JAVA_HOME=$java_dir $liberty_dir/bin/server start $server_name 1>&2 > /dev/null &
+}
+
+function restart() {
+  stop
+  start
 }
 
 case "$1" in
