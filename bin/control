@@ -3,12 +3,18 @@
 PATH=/bin/:/usr/bin:$PATH
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
-LIBERTY_PID_FILE=$OPENSHIFT_LIBERTY_DIR/servers/.pid/defaultServer.pid
+liberty_dir=$OPENSHIFT_LIBERTY_DROPLET_DIR/.liberty
+java_dir=$OPENSHIFT_LIBERTY_DROPLET_DIR/.java
+server_name=defaultServer
+server_pid_file=$liberty_dir/servers/.pid/$server_name.pid
+server_dir=$liberty_dir/usr/servers/$server_name
+server_package=$server_name.zip
+
 
 function isrunning() {
-  if [ -f "$LIBERTY_PID_FILE" ]
+  if [ -f "$server_pid_file" ]
   then
-    pid=$(cat $LIBERTY_PID_FILE);
+    pid=$(cat $server_pid_file);
     if ps -p $pid 1>&2 > /dev/null
     then
       return 0
@@ -17,107 +23,37 @@ function isrunning() {
   return 1
 }
 
-function ishttpup() {
-  count=0
-  while [ ${count} -lt 64 ]
-  do
-    if lsof -P -n -i "@${OPENSHIFT_LIBERTY_IP}:${OPENSHIFT_LIBERTY_HTTP_PORT}" | grep "(LISTEN)" > /dev/null
-    then
-      echo "Found ${OPENSHIFT_LIBERTY_IP}:${OPENSHIFT_LIBERTY_HTTP_PORT} listening port"
-      return 0
-    fi
-    let count=${count}+1
-    sleep 2
-  done
-  return 1
+function start() {
+  # create env that buildpack expects
+  export PORT=$OPENSHIFT_LIBERTY_HTTP_PORT
+  export VCAP_APPLICATION={\"host\":\"$OPENSHIFT_LIBERTY_IP\"}
+  # build droplet that contains everything needed to run app
+  out=$($OPENSHIFT_LIBERTY_BUILDPACK_DIR/bin/compile $OPENSHIFT_LIBERTY_DROPLET_DIR $OPENSHIFT_LIBERTY_CACHE_DIR)
+  echo $out
+  # metadata indicating how script should be executed
+  metadata=$($OPENSHIFT_LIBERTY_BUILDPACK_DIR/bin/release $OPENSHIFT_LIBERTY_DROPLET_DIR)
+  echo $metadata
+  # only way server will start on openshift is with command port disabled
+  echo "command.port=-1" >> $server_dir/bootstrap.properties
+  # fix host - in openshift we need specific host
+  sed -i 's/host="\*"/host="${host}"/g' $server_dir/server.xml
+  # actually start server
+  #TODO use output of release phase
+  $liberty_dir/create_vars.rb $server_dir/runtime-vars.xml
+  JAVA_HOME=$java_dir $liberty_dir/bin/server start $server_name 1>&2 > /dev/null &
 }
 
-killtree() {
-  local _pid=$1
-  for _child in $(ps -o pid --no-headers --ppid ${_pid}); do
-    killtree ${_child}
-  done
-
-  local should_be_gone_pid=$(ps -o pid -p ${_pid} --no-headers)
-  if [ -z "$should_be_gone_pid" ]; then
-    return
-  else
-    # process might have finished stopping after the ps check above
-    # so prevent kill from throwing an error (which would exit the script due to bash -e)
-    # with || true
-    kill -TERM ${_pid} || true
-  fi
-
-  local count=0
-  while [ ${count} -lt 15 ]
-  do
-    local should_be_gone_pid=$(ps -o pid -p ${_pid} --no-headers)
-    if [ -z "$should_be_gone_pid" ]; then
-      return
-    else
-      sleep 2
-      let count=${count}+1
-    fi
-  done
-
-  local should_be_gone_pid=$(ps -o pid -p ${_pid} --no-headers)
-  if [ ! -z $should_be_gone_pid ]
-  then
-    kill -9 ${_pid}
-  fi
+function stop() {
+  #TODO
+  echo
 }
 
-function start {
-  if isrunning
-  then
-    echo "app is already running"
-  else
-    if [ "$IBM_LIBERTY_LICENSE" == "L-JTHS-95XRL8" ]
-    then
-      opts=""
-      if marker_present "clean_start"
-      then
-        opts="--clean"
-      fi
-      if marker_present "enable_jpda"
-      then
-        echo "starting Liberty cartridge in debug mode"
-        $OPENSHIFT_LIBERTY_DIR/wlp/bin/server debug defaultServer $opts 1>&2 > /dev/null &
-        echo $! > $LIBERTY_PID_FILE
-      else
-        echo "starting Liberty cartridge"
-        $OPENSHIFT_LIBERTY_DIR/wlp/bin/server start defaultServer $opts 1>&2 > /dev/null &
-      fi
-      rc=0
-      ishttpup || rc=$?
-      if [ $rc -eq 1 ]
-      then
-        echo "Timed out waiting for http listening port for Liberty"
-        exit 1
-      fi
-    else
-      echo "missing Liberty license, set IBM_LIBERTY_LICENSE env var"
-      exit 1
-    fi
-  fi
-}
-
-function stop {
-  if isrunning
-  then
-    pid=$(cat $LIBERTY_PID_FILE);
-    killtree $pid
-  else
-    echo "app is not running"
-  fi
-}
-
-function restart {
+function restart() {
   stop
   start
 }
 
-function status {
+function status() {
   if isrunning
   then
     client_result "app is running"
@@ -126,72 +62,54 @@ function status {
   fi
 }
 
-function reload {
-  restart
-}
-
-function tidy {
-  client_message "deleting Liberty logs in default dir: $OPENSHIFT_LIBERTY_LOG_DIR"
-  rm -rf $OPENSHIFT_LIBERTY_LOG_DIR/*
-  client_message "deleting Liberty transaction logs in default dir: $OPENSHIFT_LIBERTY_TRANLOG_DIR"
-  rm -rf $OPENSHIFT_LIBERTY_TRANLOG_DIR/*
-}
-
-function deploy {
-  echo "Deploying Liberty"
-  # normal openshift mode, like template app
-  if [ -d ${OPENSHIFT_REPO_DIR}/.openshift/config ]
-  then
-    rsync -r --exclude ".*" ${OPENSHIFT_REPO_DIR}/.openshift/config/ ${OPENSHIFT_LIBERTY_DIR}/servers/defaultServer/
-  fi
-  # server directory hybrid with .openshift
-  if [ -d ${OPENSHIFT_REPO_DIR}/apps ]
-  then
-    rsync -r --delete --exclude ".*" ${OPENSHIFT_REPO_DIR}/apps/ ${OPENSHIFT_LIBERTY_DIR}/servers/defaultServer/apps/
-  fi
-  if [ -d ${OPENSHIFT_REPO_DIR}/dropins ]
-  then
-    rsync -r --delete --exclude ".*" ${OPENSHIFT_REPO_DIR}/dropins/ ${OPENSHIFT_LIBERTY_DIR}/servers/defaultServer/dropins/
-  fi
+function deploy() {
+  rm -rf $OPENSHIFT_LIBERTY_DROPLET_DIR/*
+  rm -rf $OPENSHIFT_LIBERTY_DROPLET_DIR/.[a-z]*
+  type=$($OPENSHIFT_LIBERTY_BUILDPACK_DIR/bin/detect $OPENSHIFT_REPO_DIR)
+  echo $type
   # server package
-  if [ -e ${OPENSHIFT_REPO_DIR}/defaultServer.zip ]
+  if [[ $type =~ "Liberty-SVR-PKG" ]]
   then
-    rm -rf ${OPENSHIFT_TMP_DIR}/wlp
-    unzip ${OPENSHIFT_REPO_DIR}/defaultServer.zip -d ${OPENSHIFT_TMP_DIR}
-    rsync -r --delete ${OPENSHIFT_TMP_DIR}/wlp/usr/servers/defaultServer/ ${OPENSHIFT_LIBERTY_DIR}/servers/defaultServer/
-    # cleanup
-    rm -rf ${OPENSHIFT_LIBERTY_DIR}/servers/defaultServer/logs
-    rm -rf ${OPENSHIFT_LIBERTY_DIR}/servers/defaultServer/workarea
-    rm -rf ${OPENSHIFT_TMP_DIR}/wlp
+    unzip $OPENSHIFT_REPO_DIR/$server_package -d $OPENSHIFT_LIBERTY_DROPLET_DIR
+    rm -rf $server_dir/logs
+    rm -rf $server_dir/workarea
+  # server directory
+  elif [[ $type =~ "Liberty-SVR-DIR*" ]]
+  then
+    cp -R $OPENSHIFT_REPO_DIR/* $OPENSHIFT_LIBERTY_DROPLET_DIR/
+  # war or ear built from source
+  elif [ -f $OPENSHIFT_REPO_DIR/built/*.war ] || [ -f $OPENSHIFT_REPO_DIR/built/*.ear ]
+  then
+    pushd $OPENSHIFT_LIBERTY_DROPLET_DIR 1> /dev/null
+      jar xf $OPENSHIFT_REPO_DIR/built/*.war #TODO ear, multiple files 
+    popd 1> /dev/null
+  else
+    echo "application format not valid"
+    return 1
   fi
+}
+
+function tidy() {
+  #TODO
+  echo
 }
 
 function threaddump() {
-  if ! isrunning
-  then
-    echo "app is stopped"
-    exit 1
-  else
-    dump_file=$OPENSHIFT_LIBERTY_LOG_DIR/threaddump.out
-    pid=$(cat $LIBERTY_PID_FILE);
-    jstack -l $pid >> $dump_file
-    client_result "The thread dump file is available at: $dump_file"
-  fi
+  #TODO
+  echo
 }
 
 case "$1" in
-  start)       start ;;
-  stop)        stop ;;
-  restart)     restart ;;
-  status)      status ;;
-  reload)      reload ;;
-  tidy)        tidy ;;
-  build)       
-    ${OPENSHIFT_LIBERTY_DIR}/bin/build
-  ;;
-  deploy)      deploy ;;
-  threaddump)  threaddump ;;
-  *)           exit 0
+  start)	start ;;
+  stop)		stop ;;
+  restart)	restart ;;
+  reload)	restart ;;
+  build)	$OPENSHIFT_LIBERTY_DIR/bin/build ;;
+  deploy)	deploy ;; 
+  tidy)		tidy ;;
+  threaddump)	threaddump ;;
+  status)	status ;;
+  *)		exit 0
 esac
 
 exit 0

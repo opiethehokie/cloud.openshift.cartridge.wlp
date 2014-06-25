@@ -5,7 +5,7 @@ Cartridge-Vendor: ibm
 Description: "A cartridge for IBM WebSphere Application Server Liberty."
 Version: '8.5.5'
 Vendor: IBM
-Cartridge-Version: 0.0.1
+Cartridge-Version: 0.0.2
 Scaling:
   Min: 1
   Max: -1
