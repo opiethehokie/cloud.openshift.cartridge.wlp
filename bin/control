@@ -100,25 +100,21 @@ function deploy() {
   rm -rf $stage_marker
   if [ -f "$OPENSHIFT_REPO_DIR/pom.xml" ]
   then
-    echo "found build from source"
+    echo "found possible build from source"
     extract_archives $OPENSHIFT_REPO_DIR/apps 
-  else
-    type=$($OPENSHIFT_LIBERTY_BUILDPACK_DIR/bin/detect $OPENSHIFT_REPO_DIR)
-    echo $type
-    if [[ $type =~ "Liberty-SVR-PKG" ]]
-    then
-      echo "found server package"
-      unzip $OPENSHIFT_REPO_DIR/$server_package -d $OPENSHIFT_LIBERTY_DROPLET_DIR
-      rm -rf $server_dir/logs
-      rm -rf $server_dir/workarea
-    elif [[ $type =~ "Liberty-SVR-DIR" ]]
-    then
-      echo "found server directory"
-      rsync -r --exclude ".*" $OPENSHIFT_REPO_DIR/ $OPENSHIFT_LIBERTY_DROPLET_DIR/
-    else
-      echo "found archive"
-      extract_archives $OPENSHIFT_REPO_DIR
-    fi
+  elif [ -f "$OPENSHIFT_REPO_DIR/$server_package" ]
+  then
+    echo "found possible server package"
+    unzip -q $OPENSHIFT_REPO_DIR/$server_package -d $OPENSHIFT_LIBERTY_DROPLET_DIR
+    rm -rf $server_dir/logs
+    rm -rf $server_dir/workarea
+  elif [ -f "$OPENSHIFT_REPO_DIR/server.xml" ]
+  then
+    echo "found possible server directory"
+    rsync -r --exclude ".*" $OPENSHIFT_REPO_DIR/ $OPENSHIFT_LIBERTY_DROPLET_DIR/
+  else [ -d "$OPENSHIFT_REPO_DIR/WEB-INF" ]
+    echo "found possible WAR or EAR"
+    extract_archives $OPENSHIFT_REPO_DIR
   fi
 }
 
@@ -183,6 +179,9 @@ function stage() {
     echo "generated VCAP_APPLICATION=$VCAP_APPLICATION"
     export VCAP_SERVICES=$(create_vcap_services)
     echo "generated VCAP_SERVICES=$VCAP_SERVICES"
+    # verify valid app
+    type=$($OPENSHIFT_LIBERTY_BUILDPACK_DIR/bin/detect $OPENSHIFT_LIBERTY_DROPLET_DIR)
+    echo $type
     # build droplet that contains everything needed to run app
     out=$($OPENSHIFT_LIBERTY_BUILDPACK_DIR/bin/compile $OPENSHIFT_LIBERTY_DROPLET_DIR $OPENSHIFT_LIBERTY_CACHE_DIR)
     echo $out
