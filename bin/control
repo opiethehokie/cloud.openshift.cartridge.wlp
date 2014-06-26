@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash
 
 PATH=/bin/:/usr/bin:$PATH
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
@@ -6,9 +6,10 @@ source $OPENSHIFT_CARTRIDGE_SDK_BASH
 liberty_dir=$OPENSHIFT_LIBERTY_DROPLET_DIR/.liberty
 java_dir=$OPENSHIFT_LIBERTY_DROPLET_DIR/.java
 server_name=defaultServer
-server_pid_file=$liberty_dir/servers/.pid/$server_name.pid
+server_pid_file=$liberty_dir/usr/servers/.pid/$server_name.pid
 server_dir=$liberty_dir/usr/servers/$server_name
 server_package=$server_name.zip
+stage_marker=$OPENSHIFT_LIBERTY_DIR/.staged
 
 
 function isrunning() {
@@ -79,36 +80,45 @@ function status() {
   fi
 }
 
+function extract_archives() {
+  echo "searching $1"
+  for f in $1/*
+  do
+    if [[ $f =~ \.war$ ]] || [[ $f =~ \.ear$ ]]
+    then
+      echo "extracting $f"
+      pushd $OPENSHIFT_LIBERTY_DROPLET_DIR 1> /dev/null
+        jar xf $f
+      popd 1> /dev/null
+    fi
+  done
+}
+
 function deploy() {
   rm -rf $OPENSHIFT_LIBERTY_DROPLET_DIR/*
   rm -rf $OPENSHIFT_LIBERTY_DROPLET_DIR/.[a-z]*
-  type=$($OPENSHIFT_LIBERTY_BUILDPACK_DIR/bin/detect $OPENSHIFT_REPO_DIR)
-  echo $type
-  # server package
-  if [[ $type =~ "Liberty-SVR-PKG" ]]
+  rm -rf $stage_marker
+  if [ -f "$OPENSHIFT_REPO_DIR/pom.xml" ]
   then
-    unzip $OPENSHIFT_REPO_DIR/$server_package -d $OPENSHIFT_LIBERTY_DROPLET_DIR
-    rm -rf $server_dir/logs
-    rm -rf $server_dir/workarea
-  # server directory
-  elif [[ $type =~ "Liberty-SVR-DIR*" ]]
-  then
-    rsync -r --exclude ".*" $OPENSHIFT_REPO_DIR/ $OPENSHIFT_LIBERTY_DROPLET_DIR/
-  # war built from source
-  elif [ -f $OPENSHIFT_REPO_DIR/apps/*.war ]
-  then
-    pushd $OPENSHIFT_LIBERTY_DROPLET_DIR 1> /dev/null
-      jar xf $OPENSHIFT_REPO_DIR/built/*.war
-    popd 1> /dev/null
-  # ear built from source
-  elif [ -f $OPENSHIFT_REPO_DIR/apps/*.ear ]
-  then
-    pushd $OPENSHIFT_LIBERTY_DROPLET_DIR 1> /dev/null
-      jar xf $OPENSHIFT_REPO_DIR/built/*.ear
-    popd 1> /dev/null
+    echo "found build from source"
+    extract_archives $OPENSHIFT_REPO_DIR/apps 
   else
-    echo "application format not valid"
-    return 1
+    type=$($OPENSHIFT_LIBERTY_BUILDPACK_DIR/bin/detect $OPENSHIFT_REPO_DIR)
+    echo $type
+    if [[ $type =~ "Liberty-SVR-PKG" ]]
+    then
+      echo "found server package"
+      unzip $OPENSHIFT_REPO_DIR/$server_package -d $OPENSHIFT_LIBERTY_DROPLET_DIR
+      rm -rf $server_dir/logs
+      rm -rf $server_dir/workarea
+    elif [[ $type =~ "Liberty-SVR-DIR" ]]
+    then
+      echo "found server directory"
+      rsync -r --exclude ".*" $OPENSHIFT_REPO_DIR/ $OPENSHIFT_LIBERTY_DROPLET_DIR/
+    else
+      echo "found archive"
+      extract_archives $OPENSHIFT_REPO_DIR
+    fi
   fi
 }
 
@@ -126,7 +136,7 @@ function threaddump() {
     exit 1
   else
     dump_file=$OPENSHIFT_LIBERTY_LOG_DIR/threaddump.out
-    pid=$(cat $LIBERTY_PID_FILE);
+    pid=$(cat $server_pid_file);
     jstack -l $pid >> $dump_file
     client_result "The thread dump file is available at: $dump_file"
   fi
@@ -165,24 +175,31 @@ function create_vcap_services() {
 }
 
 function stage() {
-  # create env that buildpack expects
-  export PORT=$OPENSHIFT_LIBERTY_HTTP_PORT
-  export VCAP_APPLICATION={\"host\":\"$OPENSHIFT_LIBERTY_IP\"}
-  echo "generated VCAP_APPLICATION=$VCAP_APPLICATION"
-  export VCAP_SERVICES=$(create_vcap_services)
-  echo "generated VCAP_SERVICES=$VCAP_SERVICES"
-  # build droplet that contains everything needed to run app
-  out=$($OPENSHIFT_LIBERTY_BUILDPACK_DIR/bin/compile $OPENSHIFT_LIBERTY_DROPLET_DIR $OPENSHIFT_LIBERTY_CACHE_DIR)
-  echo $out
-  # metadata indicating how script should be executed
-  metadata=$($OPENSHIFT_LIBERTY_BUILDPACK_DIR/bin/release $OPENSHIFT_LIBERTY_DROPLET_DIR)
-  echo $metadata
-  # only way server will start on openshift is with command port disabled
-  echo "command.port=-1" >> $server_dir/bootstrap.properties
-  # fix host - in openshift we need specific host not *
-  sed -i 's/host="\*"/host="${host}"/g' $server_dir/server.xml
-  # add env vars to server.xml
-  $liberty_dir/create_vars.rb $server_dir/runtime-vars.xml
+  if [ ! -f "$stage_marker" ]
+  then
+    # create env that buildpack expects
+    export PORT=$OPENSHIFT_LIBERTY_HTTP_PORT
+    export VCAP_APPLICATION={\"host\":\"$OPENSHIFT_LIBERTY_IP\"}
+    echo "generated VCAP_APPLICATION=$VCAP_APPLICATION"
+    export VCAP_SERVICES=$(create_vcap_services)
+    echo "generated VCAP_SERVICES=$VCAP_SERVICES"
+    # build droplet that contains everything needed to run app
+    out=$($OPENSHIFT_LIBERTY_BUILDPACK_DIR/bin/compile $OPENSHIFT_LIBERTY_DROPLET_DIR $OPENSHIFT_LIBERTY_CACHE_DIR)
+    echo $out
+    # metadata indicating how script should be executed
+    metadata=$($OPENSHIFT_LIBERTY_BUILDPACK_DIR/bin/release $OPENSHIFT_LIBERTY_DROPLET_DIR)
+    echo $metadata
+    # only way server will start on openshift is with command port disabled
+    echo "command.port=-1" >> $server_dir/bootstrap.properties
+    # fix host - in openshift we need specific host not *
+    sed -i 's/host="\*"/host="${host}"/g' $server_dir/server.xml
+    # add env vars to server.xml
+    $liberty_dir/create_vars.rb $server_dir/runtime-vars.xml
+    # not needed in openshift
+    sed -i '/-Dcom.ibm.tx.jta.disable2PC=true/d' $server_dir/jvm.options
+    sed -i '/-XX:OnOutOfMemoryError=.\/.buildpack-diagnostics\/killjava/d' $server_dir/jvm.options
+  fi
+  touch $stage_marker
 }
 
 function start() {
@@ -201,7 +218,7 @@ function start() {
     then
       echo "starting Liberty cartridge in debug mode"
       JAVA_HOME=$java_dir $liberty_dir/bin/server debug $server_name 1>&2 > /dev/null &
-      echo $! > $LIBERTY_PID_FILE
+      echo $! > $server_pid_file
     else
       echo "starting Liberty cartridge"
       JAVA_HOME=$java_dir $liberty_dir/bin/server start $server_name 1>&2 > /dev/null &
@@ -216,10 +233,10 @@ function start() {
   fi
 }
 
-function stop {
+function stop() {
   if isrunning
   then
-    pid=$(cat $LIBERTY_PID_FILE);
+    pid=$(cat $server_pid_file);
     killtree $pid
   else
     echo "app is not running"

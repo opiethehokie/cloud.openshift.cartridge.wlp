@@ -1,4 +1,4 @@
-ed -i "s/{APP_NAME}/$OPENSHIFT_APP_NAME/g" $OPENSHIFT_LIBERTY_DROPLET_DIR/pom.xml!/bin/bash -e
+#!/bin/bash -e
 
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
@@ -16,6 +16,6 @@ then
 fi
 
 # deploy template app (WAR deploy but WAR is already extracted)
-sed -i "s/{APP_NAME}/$OPENSHIFT_APP_NAME/g" $OPENSHIFT_LIBERTY_DIR}/template/pom.xml
+sed -i "s/{APP_NAME}/$OPENSHIFT_APP_NAME/g" $OPENSHIFT_LIBERTY_DIR/template/pom.xml
 cp -R $OPENSHIFT_LIBERTY_DIR/template/src/main/webapp/* $OPENSHIFT_LIBERTY_DROPLET_DIR
 
