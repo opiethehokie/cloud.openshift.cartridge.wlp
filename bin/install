@@ -1,4 +1,4 @@
-#!/bin/bash -e
+ed -i "s/{APP_NAME}/$OPENSHIFT_APP_NAME/g" $OPENSHIFT_LIBERTY_DROPLET_DIR/pom.xml!/bin/bash -e
 
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
@@ -6,6 +6,7 @@ source $OPENSHIFT_CARTRIDGE_SDK_BASH
 # create directories used by buildpack
 mkdir -p $OPENSHIFT_LIBERTY_DROPLET_DIR
 mkdir -p $OPENSHIFT_LIBERTY_CACHE_DIR
+mkdir -p $OPENSHIFT_LIBERTY_LOG_DIR
 
 # download buildpack if it's not packaged as part of cartridge
 if [ ! -d "$OPENSHIFT_LIBERTY_BUILDPACK_DIR" ]
@@ -15,5 +16,6 @@ then
 fi
 
 # deploy template app (WAR deploy but WAR is already extracted)
+sed -i "s/{APP_NAME}/$OPENSHIFT_APP_NAME/g" $OPENSHIFT_LIBERTY_DIR}/template/pom.xml
 cp -R $OPENSHIFT_LIBERTY_DIR/template/src/main/webapp/* $OPENSHIFT_LIBERTY_DROPLET_DIR
 

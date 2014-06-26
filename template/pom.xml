@@ -71,7 +71,7 @@
 		<profile>
 			<!-- When built in OpenShift the 'openshift' profile will be used when invoking mvn. -->
 			<!-- Use this profile for any OpenShift specific customization your app will need. -->
-			<!-- By default that is to put the resulting archive into the 'built' directory. -->
+			<!-- By default that is to put the resulting archive into the 'apps' directory. -->
 			<!-- http://maven.apache.org/guides/mini/guide-building-for-different-environments.html -->
 			<id>openshift</id>
 			<build>
@@ -81,7 +81,7 @@
 						<artifactId>maven-war-plugin</artifactId>
 						<version>2.1.1</version>
 						<configuration>
-							<outputDirectory>built</outputDirectory>
+							<outputDirectory>apps</outputDirectory>
 							<warName>template</warName>
 						</configuration>
 					</plugin>
