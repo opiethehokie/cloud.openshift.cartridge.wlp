@@ -8,9 +8,8 @@ java_dir=$OPENSHIFT_LIBERTY_DROPLET_DIR/.java
 server_name=defaultServer
 server_pid_file=$liberty_dir/usr/servers/.pid/$server_name.pid
 server_dir=$liberty_dir/usr/servers/$server_name
-server_package=$server_name.zip
-app_hash_file=$OPENSHIFT_LIBERTY_DIR/.app
 services_hash_file=$OPENSHIFT_LIBERTY_DIR/.services
+restage_marker=$OPENSHIFT_LIBERTY_DIR/.app
 
 
 function isrunning() {
@@ -98,14 +97,16 @@ function extract_archives() {
 function deploy() {
   rm -rf $OPENSHIFT_LIBERTY_DROPLET_DIR/*
   rm -rf $OPENSHIFT_LIBERTY_DROPLET_DIR/.[a-z]*
+  touch $restage_marker
   if [ -f "$OPENSHIFT_REPO_DIR/pom.xml" ]
   then
     echo "found possible build from source"
     extract_archives $OPENSHIFT_REPO_DIR/apps 
-  elif [ -f "$OPENSHIFT_REPO_DIR/$server_package" ]
+  elif ls $OPENSHIFT_REPO_DIR/*.zip 1>&2 > /dev/null
   then
     echo "found possible server package"
-    unzip -q $OPENSHIFT_REPO_DIR/$server_package -d $OPENSHIFT_LIBERTY_DROPLET_DIR
+    unzip -q $(ls $OPENSHIFT_REPO_DIR/*.zip) -d $OPENSHIFT_LIBERTY_DROPLET_DIR
+    mv $OPENSHIFT_LIBERTY_DROPLET_DIR/wlp/usr/servers/* $OPENSHIFT_LIBERTY_DROPLET_DIR/wlp/usr/servers/$server_name
     rm -rf $server_dir/logs
     rm -rf $server_dir/workarea
   elif [ -f "$OPENSHIFT_REPO_DIR/server.xml" ]
@@ -171,10 +172,6 @@ function create_vcap_services() {
 }
 
 function stage() {
-  # app files hash so we can check if application has changed and needs to be restaged
-  app_hash=($(find $OPENSHIFT_LIBERTY_DROPLET_DIR -type f \( ! -regex '.*/\..*' \) -exec cat {} \; | md5sum))
-  old_app_hash=$(cat $app_hash_file) 
-  echo $app_hash > $app_hash_file
   # create env that buildpack expects
   export PORT=$OPENSHIFT_LIBERTY_HTTP_PORT
   export VCAP_APPLICATION={\"host\":\"$OPENSHIFT_LIBERTY_IP\"}
@@ -183,7 +180,7 @@ function stage() {
   services_hash=($(echo $VCAP_SERVICES | md5sum))
   old_services_hash=$(cat $services_hash_file) 
   echo $services_hash > $services_hash_file
-  if [ "$app_hash" != "$old_app_hash" ] || [ "$services_hash" != "$old_services_hash" ]
+  if [ -f $restage_marker ] || [ "$services_hash" != "$old_services_hash" ]
   then 
     echo "generated VCAP_APPLICATION=$VCAP_APPLICATION"
     echo "generated VCAP_SERVICES=$VCAP_SERVICES"
@@ -205,6 +202,8 @@ function stage() {
     # not needed in openshift
     sed -i '/-Dcom.ibm.tx.jta.disable2PC=true/d' $server_dir/jvm.options
     sed -i '/-XX:OnOutOfMemoryError=.\/.buildpack-diagnostics\/killjava/d' $server_dir/jvm.options
+    # staging complete
+    rm -rf $restage_marker
   fi
 }
 
