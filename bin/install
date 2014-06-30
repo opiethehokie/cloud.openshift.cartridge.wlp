@@ -8,6 +8,10 @@ mkdir -p $OPENSHIFT_LIBERTY_DROPLET_DIR
 mkdir -p $OPENSHIFT_LIBERTY_CACHE_DIR
 mkdir -p $OPENSHIFT_LIBERTY_LOG_DIR
 
+# create files used by cartridge
+touch $OPENSHIFT_LIBERTY_DIR/.app
+touch $OPENSHIFT_LIBERTY_DIR/.services
+
 # download buildpack if it's not packaged as part of cartridge
 if [ ! -d "$OPENSHIFT_LIBERTY_BUILDPACK_DIR" ]
 then

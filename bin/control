@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 PATH=/bin/:/usr/bin:$PATH
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
@@ -9,7 +9,8 @@ server_name=defaultServer
 server_pid_file=$liberty_dir/usr/servers/.pid/$server_name.pid
 server_dir=$liberty_dir/usr/servers/$server_name
 server_package=$server_name.zip
-stage_marker=$OPENSHIFT_LIBERTY_DIR/.staged
+app_hash_file=$OPENSHIFT_LIBERTY_DIR/.app
+services_hash_file=$OPENSHIFT_LIBERTY_DIR/.services
 
 
 function isrunning() {
@@ -97,7 +98,6 @@ function extract_archives() {
 function deploy() {
   rm -rf $OPENSHIFT_LIBERTY_DROPLET_DIR/*
   rm -rf $OPENSHIFT_LIBERTY_DROPLET_DIR/.[a-z]*
-  rm -rf $stage_marker
   if [ -f "$OPENSHIFT_REPO_DIR/pom.xml" ]
   then
     echo "found possible build from source"
@@ -112,7 +112,7 @@ function deploy() {
   then
     echo "found possible server directory"
     rsync -r --exclude ".*" $OPENSHIFT_REPO_DIR/ $OPENSHIFT_LIBERTY_DROPLET_DIR/
-  else [ -d "$OPENSHIFT_REPO_DIR/WEB-INF" ]
+  else
     echo "found possible WAR or EAR"
     extract_archives $OPENSHIFT_REPO_DIR
   fi
@@ -171,13 +171,21 @@ function create_vcap_services() {
 }
 
 function stage() {
-  if [ ! -f "$stage_marker" ]
-  then
-    # create env that buildpack expects
-    export PORT=$OPENSHIFT_LIBERTY_HTTP_PORT
-    export VCAP_APPLICATION={\"host\":\"$OPENSHIFT_LIBERTY_IP\"}
+  # app files hash so we can check if application has changed and needs to be restaged
+  app_hash=($(find $OPENSHIFT_LIBERTY_DROPLET_DIR -type f \( ! -regex '.*/\..*' \) -exec cat {} \; | md5sum))
+  old_app_hash=$(cat $app_hash_file) 
+  echo $app_hash > $app_hash_file
+  # create env that buildpack expects
+  export PORT=$OPENSHIFT_LIBERTY_HTTP_PORT
+  export VCAP_APPLICATION={\"host\":\"$OPENSHIFT_LIBERTY_IP\"}
+  export VCAP_SERVICES=$(create_vcap_services)
+  # service info hash so we can check if service carts have been added/removed and we need to restage
+  services_hash=($(echo $VCAP_SERVICES | md5sum))
+  old_services_hash=$(cat $services_hash_file) 
+  echo $services_hash > $services_hash_file
+  if [ "$app_hash" != "$old_app_hash" ] || [ "$services_hash" != "$old_services_hash" ]
+  then 
     echo "generated VCAP_APPLICATION=$VCAP_APPLICATION"
-    export VCAP_SERVICES=$(create_vcap_services)
     echo "generated VCAP_SERVICES=$VCAP_SERVICES"
     # verify valid app
     type=$($OPENSHIFT_LIBERTY_BUILDPACK_DIR/bin/detect $OPENSHIFT_LIBERTY_DROPLET_DIR)
@@ -192,13 +200,12 @@ function stage() {
     echo "command.port=-1" >> $server_dir/bootstrap.properties
     # fix host - in openshift we need specific host not *
     sed -i 's/host="\*"/host="${host}"/g' $server_dir/server.xml
-    # add env vars to server.xml
+    # add env vars to server.xml (done by DEA in CF)
     $liberty_dir/create_vars.rb $server_dir/runtime-vars.xml
     # not needed in openshift
     sed -i '/-Dcom.ibm.tx.jta.disable2PC=true/d' $server_dir/jvm.options
     sed -i '/-XX:OnOutOfMemoryError=.\/.buildpack-diagnostics\/killjava/d' $server_dir/jvm.options
   fi
-  touch $stage_marker
 }
 
 function start() {
@@ -213,6 +220,7 @@ function start() {
     else
       opts=""
     fi
+    # starting app done by DEA in CF based on release phase output
     if marker_present "enable_jpda"
     then
       echo "starting Liberty cartridge in debug mode"
@@ -260,4 +268,3 @@ case "$1" in
   *)		exit 0
 esac
 
-exit 0
