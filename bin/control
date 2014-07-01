@@ -122,8 +122,6 @@ function deploy() {
 function tidy() {
   client_message "deleting Liberty logs in default dir: $OPENSHIFT_LIBERTY_LOG_DIR"
   rm -rf $OPENSHIFT_LIBERTY_LOG_DIR/*
-  client_message "deleting Liberty transaction logs in default dir: $OPENSHIFT_LIBERTY_TRANLOG_DIR"
-  rm -rf $OPENSHIFT_LIBERTY_TRANLOG_DIR/*
 }
 
 function threaddump() {
@@ -225,11 +223,11 @@ function start() {
     if marker_present "enable_jpda"
     then
       echo "starting Liberty cartridge in debug mode"
-      JAVA_HOME=$java_dir $liberty_dir/bin/server debug $server_name 1>&2 > /dev/null &
+      JAVA_HOME=$java_dir $liberty_dir/bin/server debug $server_name $opts 1>&2 > /dev/null &
       echo $! > $server_pid_file
     else
       echo "starting Liberty cartridge"
-      JAVA_HOME=$java_dir $liberty_dir/bin/server start $server_name 1>&2 > /dev/null &
+      JAVA_HOME=$java_dir $liberty_dir/bin/server start $server_name $opts 1>&2 > /dev/null &
     fi
     rc=0
     ishttpup || rc=$?
