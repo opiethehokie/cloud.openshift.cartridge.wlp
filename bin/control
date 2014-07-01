@@ -212,7 +212,7 @@ function start() {
   then
     echo "app is already running"
   else
-#    stage
+    stage
     if marker_present "clean_start"
     then
       opts="--clean"
@@ -227,15 +227,15 @@ function start() {
       echo $! > $server_pid_file
     else
       echo "starting Liberty cartridge"
-#      JAVA_HOME=$java_dir $liberty_dir/bin/server start $server_name $opts 1>&2 > /dev/null &
+      JAVA_HOME=$java_dir $liberty_dir/bin/server start $server_name $opts 1>&2 > /dev/null &
     fi
-#    rc=0
-#    ishttpup || rc=$?
-#    if [ $rc -eq 1 ]
-#    then
-#      echo "Timed out waiting for http listening port for Liberty"
-#      exit 1
-#    fi
+    rc=0
+    ishttpup || rc=$?
+    if [ $rc -eq 1 ]
+    then
+      echo "Timed out waiting for http listening port for Liberty"
+      exit 1
+    fi
   fi
 }
 
