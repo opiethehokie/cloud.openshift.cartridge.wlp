@@ -23,5 +23,6 @@ fi
 sed -i "s/{APP_NAME}/$OPENSHIFT_APP_NAME/g" $OPENSHIFT_LIBERTY_DIR/template/pom.xml
 cp -R $OPENSHIFT_LIBERTY_DIR/template/src/main/webapp/* $OPENSHIFT_LIBERTY_DROPLET_DIR
 
-# update ruby version so buildpack runs
-curl https://raw.github.com/gist/3342482/ded2a7c542e150807287617736e6faf0ec395256/rbenv-openshift.sh | bash
+# need ruby 193 for newer buildpack syntax
+mkdir -p $OPENSHIFT_LIBERTY_DIR/ruby193
+ln -s /usr/bin/ruby193-ruby $OPENSHIFT_LIBERTY_DIR/ruby193/ruby

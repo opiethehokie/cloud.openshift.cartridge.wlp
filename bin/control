@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-PATH=/bin/:/usr/bin:$PATH
+export PATH=$OPENSHIFT_LIBERTY_DIR/ruby193:$PATH
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
 liberty_dir=$OPENSHIFT_LIBERTY_DROPLET_DIR/.liberty
