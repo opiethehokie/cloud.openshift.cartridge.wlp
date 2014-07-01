@@ -200,8 +200,7 @@ function stage() {
     # not needed in openshift
     sed -i '/-Dcom.ibm.tx.jta.disable2PC=true/d' $server_dir/jvm.options
     # fix path
-    sed -i '/-XX:OnOutOfMemoryError=.\/.buildpack-diagnostics\/killjava/d' $server_dir/jvm.options
-    echo "-XX:OnOutOfMemoryError=$OPENSHIFT_LIBERTY_DROPLET_DIR/.buildpack-diagnostics/killjava" > $server_dir/jvm.options
+    sed -i "s|./.buildpack-diagnostics/killjava|$OPENSHIFT_LIBERTY_DROPLET_DIR/.buildpack-diagnostics/killjava|g" $server_dir/jvm.options
     # staging complete
     rm -rf $restage_marker
   fi
