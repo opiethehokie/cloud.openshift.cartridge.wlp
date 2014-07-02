@@ -200,10 +200,21 @@ function stage() {
     $liberty_dir/create_vars.rb $server_dir/runtime-vars.xml
     # not needed in openshift
     sed -i '/-Dcom.ibm.tx.jta.disable2PC=true/d' $server_dir/jvm.options
-    # fix path
+    # fix path for openshift
     sed -i "s|./.buildpack-diagnostics/killjava|$OPENSHIFT_LIBERTY_DROPLET_DIR/.buildpack-diagnostics/killjava|g" $server_dir/jvm.options
     # staging complete
     rm -rf $restage_marker
+  fi
+}
+
+function join_jvm_args() {
+  local IFS="$1"
+  shift
+  if [ "$*" == "" ]
+  then
+    echo ""
+  else
+    echo "\"$*\""
   fi
 }
 
@@ -215,21 +226,19 @@ function start() {
     stage
     if marker_present "clean_start"
     then
-      opts="--clean"
-    else
-      opts=""
+      server_opts="--clean"
     fi
-    # starting app done by DEA in CF based on release phase output
     if marker_present "enable_jpda"
     then
-      echo "starting Liberty cartridge in debug mode"
-      JAVA_HOME=$java_dir $liberty_dir/bin/server debug $server_name $opts 1>&2 > /dev/null &
-      mkdir -p $server_pid_dir
-      echo $! > $server_pid_file
-    else
-      echo "starting Liberty cartridge"
-      JAVA_HOME=$java_dir $liberty_dir/bin/server start $server_name $opts 1>&2 > /dev/null &
+      debug_args=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=$OPENSHIFT_LIBERTY_JPDA_PORT
     fi
+    # in CF the DEA would run a similar start command based on bin/release output
+    echo "starting Liberty cartridge"
+    jvm_args=$(join_jvm_args " " $debug_args $JVM_ARGS $JAVA_OPTS) # add in JAVA_OPTS for JRebel cart
+    echo "JVM_ARGS=$jvm_args"
+    JVM_ARGS=$jvm_args JAVA_HOME=$java_dir $liberty_dir/bin/server run $server_name $server_opts 1>&2 > /dev/null &
+    mkdir -p $server_pid_dir
+    echo $! > $server_pid_file
     rc=0
     ishttpup || rc=$?
     if [ $rc -eq 1 ]
