@@ -20,6 +20,9 @@ if [ ! -d "$OPENSHIFT_LIBERTY_BUILDPACK_DIR" ]; then
   sed -i 's/ruby/oo-ruby/g' $OPENSHIFT_LIBERTY_BUILDPACK_DIR/bin/detect
   sed -i 's/ruby/oo-ruby/g' $OPENSHIFT_LIBERTY_BUILDPACK_DIR/bin/compile
   sed -i 's/ruby/oo-ruby/g' $OPENSHIFT_LIBERTY_BUILDPACK_DIR/bin/release
+  sed -i 's/ruby/oo-ruby/g' $OPENSHIFT_LIBERTY_BUILDPACK_DIR/resources/download_buildpack_cache.rb
+  sed -i 's/ruby/oo-ruby/g' $OPENSHIFT_LIBERTY_BUILDPACK_DIR/resources/openjdk/diagnostics/killjava
+  sed -i 's/ruby/oo-ruby/g' $OPENSHIFT_LIBERTY_BUILDPACK_DIR/resources/liberty/create_vars.rb
 fi
 
 # deploy template app (WAR deploy but WAR is already extracted)
