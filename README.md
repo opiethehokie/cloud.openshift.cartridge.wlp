@@ -93,6 +93,7 @@ Adding marker files to .openshift/markers will have the following effects:
 | OPENSHIFT_LIBERTY_IP          | The IP address used to bind Liberty
 | OPENSHIFT_LIBERTY_HTTP_PORT   | The Liberty listening port
 | OPENSHIFT_LIBERTY_LOG_DIR     | Where Liberty logs can be written so "rhc tail" will find them
+| OPENSHIFT_LIBERTY_TRANLOG_DIR | Persistent directory where Liberty can write the transaction recovery log
 
 These are mainly useful in the server.xml file. For more information about OpenShift environment variables, consult the [environment variable documentation][].
 

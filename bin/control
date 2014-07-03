@@ -112,6 +112,8 @@ function deploy() {
 function tidy() {
   client_message "deleting Liberty logs in default dir: $OPENSHIFT_LIBERTY_LOG_DIR"
   rm -rf $OPENSHIFT_LIBERTY_LOG_DIR/*
+  client_message "deleting Liberty transaction logs in default dir: $OPENSHIFT_LIBERTY_TRANLOG_DIR"
+  rm -rf $OPENSHIFT_LIBERTY_TRANLOG_DIR/*
 }
 
 function threaddump() {
@@ -186,6 +188,8 @@ function stage() {
     sed -i '/-Dcom.ibm.tx.jta.disable2PC=true/d' $server_dir/jvm.options
     # fix path for openshift
     sed -i "s|./.buildpack-diagnostics/killjava|$OPENSHIFT_LIBERTY_DROPLET_DIR/.buildpack-diagnostics/killjava|g" $server_dir/jvm.options
+    # save transaction logs between re-stages since we have persistent storage unlike CF
+    sed -i "s|</server>|<transaction transactionLogDirectory=\"$OPENSHIFT_LIBERTY_TRANLOG_DIR\" /></server>|g" $server_dir/server.xml
     # staging complete
     rm -rf $restage_marker
   fi
