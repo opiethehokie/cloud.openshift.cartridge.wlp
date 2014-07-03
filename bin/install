@@ -13,16 +13,16 @@ touch $OPENSHIFT_LIBERTY_DIR/.app
 touch $OPENSHIFT_LIBERTY_DIR/.services
 
 # download buildpack if it's not packaged as part of cartridge
-if [ ! -d "$OPENSHIFT_LIBERTY_BUILDPACK_DIR" ]
-then
+if [ ! -d "$OPENSHIFT_LIBERTY_BUILDPACK_DIR" ]; then
   client_message "downloading buildpack"
   git clone https://github.com/cloudfoundry/ibm-websphere-liberty-buildpack.git $OPENSHIFT_LIBERTY_BUILDPACK_DIR
+  # need >= ruby 192 for buildpack syntax and "ruby" in openshift is currently 1.8.7
+  sed -i 's/ruby/oo-ruby/g' $OPENSHIFT_LIBERTY_BUILDPACK_DIR/bin/detect
+  sed -i 's/ruby/oo-ruby/g' $OPENSHIFT_LIBERTY_BUILDPACK_DIR/bin/compile
+  sed -i 's/ruby/oo-ruby/g' $OPENSHIFT_LIBERTY_BUILDPACK_DIR/bin/release
 fi
 
 # deploy template app (WAR deploy but WAR is already extracted)
 sed -i "s/{APP_NAME}/$OPENSHIFT_APP_NAME/g" $OPENSHIFT_LIBERTY_DIR/template/pom.xml
 cp -R $OPENSHIFT_LIBERTY_DIR/template/src/main/webapp/* $OPENSHIFT_LIBERTY_DROPLET_DIR
 
-# need ruby 193 for newer buildpack syntax
-mkdir -p $OPENSHIFT_LIBERTY_DIR/ruby193
-ln -s /usr/bin/ruby193-ruby $OPENSHIFT_LIBERTY_DIR/ruby193/ruby
