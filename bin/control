@@ -214,7 +214,7 @@ function start() {
       server_opts="--clean"
     fi
     if marker_present "enable_jpda"; then
-      debug_args=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=$OPENSHIFT_LIBERTY_JPDA_PORT
+      debug_args=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=$OPENSHIFT_LIBERTY_IP:$OPENSHIFT_LIBERTY_JPDA_PORT
     fi
     # in CF the DEA would run a similar start command based on bin/release output
     echo "starting Liberty cartridge"
