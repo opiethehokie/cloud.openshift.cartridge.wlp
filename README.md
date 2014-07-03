@@ -29,7 +29,7 @@ To use OpenJDK instead of the IBM JRE set the JVM=openjdk environment variable.
 
 There are multiple options for deploying applications on Liberty in OpenShift. In the basic workflows below, each operation will require associated git add/commit/push operations to take effect.
 
-For methods 1 and 2, the server.xml will be automatically generated when the application changes or an additional cartridge is added/removed. The context-root is "/". For methods 3 and 4 you are providing your own server.xml. The cartridge will only attempt to modify it so that the server will be able to start in the OpenShift environment.
+For methods 1 and 2, the server.xml will be automatically generated when the application changes or an additional database cartridge (PostgreSQL, MySQL, MongoDB) is added/removed and the application is restarted. The context-root is "/". For methods 3 and 4 you are providing your own server.xml. The cartridge will only attempt to modify it enough so that the server will be able to start in the OpenShift environment.
 
 ### Method 1
 
