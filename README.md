@@ -113,11 +113,12 @@ Example of creating a scalable app with a downloadable cartridge at OpenShift On
 rhc create-app <app name> http://cartreflect-claytondev.rhcloud.com/reflect?github=opiethehokie/openshift-liberty-buildpack-cartridge -s -e IBM_LIBERTY_LICENSE=<liberty license code> IBM_JVM_LICENSE=<jre license code>
 ```
 
-Examples of tailing app logs:
+Examples of tailing logs and server config:
 
 ```bash
 rhc tail --opts "-n 50"
 rhc tail -f liberty/logs/ffdc/*
+rhc tail -f liberty/droplet/.liberty/usr/servers/defaultServer/server.xml
 ```
 
 Example of triggering and viewing a thread dump:
