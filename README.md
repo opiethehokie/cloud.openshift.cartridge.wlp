@@ -130,24 +130,11 @@ rhc tail -f liberty/logs/threaddump.out
 
 ## Developing an Application in Eclipse
 
-See [Getting started with PaaS Eclipse integration][]. If you are using OpenShift Online this cartridge will not be available when you are creating an app in Eclipse. Create the app with rhc then use the existing application in Eclipse.
+See [Getting started with PaaS Eclipse integration][]. If you are using OpenShift Online this cartridge will not be available when you are creating an app in Eclipse. Create the app with rhc then use the existing application in Eclipse. It may be necessary to increase the Git remote connection timeout at Window -> Preferences -> Team -> Git.
 
-JBoss Tools can co-exist with with WebSphere Development Tools (WDT). The port-forwarding provided by OpenShift provides a way to run the app locally on Liberty while still using your databases in the cloud, or remotely debug an app running in the cloud.
+The OpenShift Eclipse plugin, JBoss Tools, can co-exist with with WebSphere Development Tools (WDT). The port-forwarding provided by OpenShift also provides a way to run the app locally on Liberty while still using your databases in the cloud, and to remotely debug an app running in the cloud.
 
-The [openshift-jrebel-cartridge][] also works with this cartridge after some minor configuration. The openshift-jrebel-cartridge sets the JAVA_OPTS environment variable which Liberty doesn't automatically recognize, so you can copy the properties from that environment variable to your jvm.options file if you are deploying a server directory or server package. You'll end up with something like:
-
-```
--javaagent:/var/lib/openshift/<gear id>/jrebel/jar/jrebel.jar
--Drebel.log=true
--Drebel.log.file=/var/lib/openshift/<gear id>/jrebel/log/jrebel.log
--Drebel.remoting_plugin=true
-```
-
-Or set the JVM_ARGS environment variable to the value of the JAVA_OPTS environment variable which would look something like this:
-
-```bash
-rhc set-env JVM_ARGS="-javaagent:/var/lib/openshift/<gear id>/jrebel/jar/jrebel.jar -Drebel.log=true -Drebel.log.file=/var/libopenshift/<gear id>/jrebel/log/jrebel.log -Drebel.remoting_plugin=true"
-```
+The [openshift-jrebel-cartridge][] and the Jenkins cartridge have also been tested with this cartirdge.
 
 
 ## Remote JMX Connections
