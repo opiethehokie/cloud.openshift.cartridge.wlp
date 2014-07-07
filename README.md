@@ -3,7 +3,7 @@
 Provides the Liberty server on OpenShift.
 
 
-## Accepting the Liberty License
+## Accepting the Liberty and JVM Licenses
 
 To deploy applications using the IBM WebSphere Application Server Liberty Cartridge, you are required to accept the IBM Liberty license and IBM JRE license by following the instructions below:
 
