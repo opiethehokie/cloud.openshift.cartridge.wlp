@@ -177,7 +177,6 @@ function join_jvm_args() {
 }
 
 function start() {
-  exit 0
   if [ -z "$IBM_LIBERTY_LICENSE" ]; then
     echo "missing Liberty license, set IBM_LIBERTY_LICENSE env var"
     exit 0 # in a Jenkins build this won't be set but it's okay to not stage and start
