@@ -4,10 +4,10 @@ require 'uri'
 require 'json'
 
 
-URL_SUFFIX = '_URL'.freeze
-POSTGRESQL_PREFIX = 'POSTGRESQL_DB_'.freeze
-MYSQL_PREFIX = 'MYSQL_DB_'.freeze
-MONGODB_PREFIX = 'MONGODB_DB_'.freeze
+URL_SUFFIX = '_DB_URL'.freeze
+POSTGRESQL_PREFIX = 'POSTGRESQL_'.freeze
+MYSQL_PREFIX = 'MYSQL_'.freeze
+MONGODB_PREFIX = 'MONGODB_'.freeze
 
 def generate_vcap_services(env)
   vcap_services = {}
@@ -40,7 +40,7 @@ def handle_postgresql(key, value, service_name_map)
   credentials = {}
   credentials['uri'] = value
   service['credentials'] = credentials
-  [key, service]
+  [type, service]
 end
 
 def handle_mysql(key, value, service_name_map)
@@ -51,7 +51,7 @@ def handle_mysql(key, value, service_name_map)
   credentials = {}
   credentials['uri'] = value
   service['credentials'] = credentials
-  [key, service]
+  [type, service]
 end
 
 def handle_mongodb(key, value, service_name_map)
@@ -62,7 +62,7 @@ def handle_mongodb(key, value, service_name_map)
   credentials = {}
   credentials['url'] = value
   service['credentials'] = credentials
-  [key, service]
+  [type, service]
 end
 
 def create_default_credentials(value)
