@@ -5,9 +5,9 @@ require 'json'
 
 
 URL_SUFFIX = '_DB_URL'.freeze
-POSTGRESQL_PREFIX = 'POSTGRESQL_'.freeze
-MYSQL_PREFIX = 'MYSQL_'.freeze
-MONGODB_PREFIX = 'MONGODB_'.freeze
+POSTGRESQL_PREFIX = 'OPENSHIFT_POSTGRESQL_'.freeze
+MYSQL_PREFIX = 'OPENSHIFT_MYSQL_'.freeze
+MONGODB_PREFIX = 'OPENSHIFT_MONGODB_'.freeze
 
 def generate_vcap_services(env)
   vcap_services = {}
