@@ -1,0 +1,104 @@
+#!/usr/bin/env oo-ruby
+
+require 'uri'
+require 'json'
+
+
+URL_SUFFIX = '_URL'.freeze
+POSTGRESQL_PREFIX = 'POSTGRESQL_DB_'.freeze
+MYSQL_PREFIX = 'MYSQL_DB_'.freeze
+MONGODB_PREFIX = 'MONGODB_DB_'.freeze
+
+def generate_vcap_services(env)
+  vcap_services = {}
+  service_name_map = parse_service_name_map(env)
+  env.each do | key, value |
+    if key.end_with?(URL_SUFFIX)
+      if key.start_with?(POSTGRESQL_PREFIX)
+        type, service = handle_postgresql(key, value, service_name_map)
+      elsif key.start_with?(MYSQL_PREFIX)
+        type, service = handle_mysql(key, value, service_name_map)
+      elsif key.start_with?(MONGODB_PREFIX)
+        type, service = handle_mongodb(key, value, service_name_map)
+      else
+        type = key
+        service = {}
+        service['name'] = service_name_map[key] || generate_name(key)
+        service['credentials'] = create_default_credentials(value)
+      end
+      vcap_services[type] = [service]
+    end
+  end
+  vcap_services
+end
+
+def handle_postgresql(key, value, service_name_map)
+  type = 'postgresql'
+  service = {}
+  service['name'] = service_name_map[key] || type
+  service['tags'] = ['postgresql']
+  credentials = {}
+  credentials['uri'] = value
+  service['credentials'] = credentials
+  [key, service]
+end
+
+def handle_mysql(key, value, service_name_map)
+  type = 'mysql'
+  service = {}
+  service['name'] = service_name_map[key] || type
+  service['tags'] = ['mysql']
+  credentials = {}
+  credentials['uri'] = value
+  service['credentials'] = credentials
+  [key, service]
+end
+
+def handle_mongodb(key, value, service_name_map)
+  type = 'mongodb'
+  service = {}
+  service['name'] = service_name_map[key] || type
+  service['tags'] = ['mongodb']
+  credentials = {}
+  credentials['url'] = value
+  service['credentials'] = credentials
+  [key, service]
+end
+
+def create_default_credentials(value)
+  credentials = {}
+  begin
+    uri = URI.parse(value)
+    credentials['host'] = credentials['hostname'] = uri.host
+    credentials['port'] = uri.port unless uri.port.nil?
+    credentials['user'] = credentials['username'] = uri.user unless uri.user.nil?
+    credentials['password'] = uri.password unless uri.password.nil?
+    credentials['name'] = uri.path[1..-1]  unless uri.path[1..-1].nil?
+  rescue URI::InvalidURIError
+    @logger.debug("unable to parse #{value}")
+  end
+  credentials['uri'] = credentials['url'] = value
+  credentials
+end
+
+def generate_name(url)
+  # remove _URL at the end & downcase it
+  name = url[0..-URL_SUFFIX.size - 1].downcase
+  name
+end
+
+def parse_service_name_map(env)
+  name_map = env['SERVICE_NAME_MAP']
+  map = {}
+  unless name_map.nil?
+    name_map.split(',').each do | value |
+      key_value = value.split('=')
+      map[key_value[0].strip] = key_value[1].strip if key_value.size == 2
+    end
+  end
+  map
+end
+
+
+puts generate_vcap_services(ENV).to_json
+

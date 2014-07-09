@@ -128,40 +128,11 @@ function threaddump() {
   fi
 }
 
-function create_credentials() {
-  echo "\"credentials\":{\"user\":\"$1\",\"password\":\"$2\",\"host\":\"$3\",\"port\":\"$4\",\"name\":\"$5\",\"uri\":\"$6\"}"
-}
-
-function create_vcap_services() {
-  var="{"
-  # postgresql 9.2
-  if [ -n "$OPENSHIFT_POSTGRESQL_DB_HOST" ]; then
-    label="postgresql"
-    creds=$(create_credentials $OPENSHIFT_POSTGRESQL_DB_USERNAME $OPENSHIFT_POSTGRESQL_DB_PASSWORD $OPENSHIFT_POSTGRESQL_DB_HOST $OPENSHIFT_POSTGRESQL_DB_PORT $OPENSHIFT_APP_NAME $OPENSHIFT_POSTGRESQL_DB_URL)
-    var+="\"$label\":[{\"name\":\"my$label\",\"label\":\"$label\",\"tags\":[\"$label\"],$creds}],"
-  fi
-  # mysql 5.1 or mariadb 5.5
-  if [ -n "$OPENSHIFT_MYSQL_DB_HOST" ]; then
-    label="mysql"
-    creds=$(create_credentials $OPENSHIFT_MYSQL_DB_USERNAME $OPENSHIFT_MYSQL_DB_PASSWORD $OPENSHIFT_MYSQL_DB_HOST $OPENSHIFT_MYSQL_DB_PORT $OPENSHIFT_APP_NAME $OPENSHIFT_MYSQL_DB_URL)
-    var+="\"$label\":[{\"name\":\"my$label\",\"label\":\"$label\",\"tags\":[\"$label\"],$creds}],"
-  fi
-  # mongodb 2.2
-  if [ -n "$OPENSHIFT_MONGODB_DB_HOST" ]; then
-    label="mongodb"
-    creds=$(create_credentials $OPENSHIFT_MONGODB_DB_USERNAME $OPENSHIFT_MONGODB_DB_PASSWORD $OPENSHIFT_MONGODB_DB_HOST $OPENSHIFT_MONGODB_DB_PORT $OPENSHIFT_APP_NAME $OPENSHIFT_MONGODB_DB_URL)
-    var+="\"$label\":[{\"name\":\"my$label\",\"label\":\"$label\",\"tags\":[\"$label\"],$creds}],"
-  fi
-  var="$var}"
-  var=$(sed 's/],}/]}/g' <<< $var) # remove trailing comma
-  echo $var
-}
-
 function stage() {
   # create env that buildpack expects
   export PORT=$OPENSHIFT_LIBERTY_HTTP_PORT
   export VCAP_APPLICATION={\"host\":\"$OPENSHIFT_LIBERTY_IP\"}
-  export VCAP_SERVICES=$(create_vcap_services)
+  export VCAP_SERVICES=$($OPENSHIFT_LIBERTY_DIR/bin/auto_config)
   # service info hash so we can check if service carts have been added/removed and we need to restage
   services_hash=($(echo $VCAP_SERVICES | md5sum))
   old_services_hash=$(cat $services_hash_file) 
@@ -206,6 +177,7 @@ function join_jvm_args() {
 }
 
 function start() {
+  exit 0
   if [ -z "$IBM_LIBERTY_LICENSE" ]; then
     echo "missing Liberty license, set IBM_LIBERTY_LICENSE env var"
     exit 0 # in a Jenkins build this won't be set but it's okay to not stage and start
