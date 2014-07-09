@@ -9,6 +9,8 @@ POSTGRESQL_PREFIX = 'OPENSHIFT_POSTGRESQL_'.freeze
 MYSQL_PREFIX = 'OPENSHIFT_MYSQL_'.freeze
 MONGODB_PREFIX = 'OPENSHIFT_MONGODB_'.freeze
 
+DB_NAME = ENV['OPENSHIFT_APP_NAME'].freeze
+
 def generate_vcap_services(env)
   vcap_services = {}
   service_name_map = parse_service_name_map(env)
@@ -39,6 +41,7 @@ def handle_postgresql(key, value, service_name_map)
   service['tags'] = ['postgresql']
   credentials = {}
   credentials['uri'] = value
+  credentials['name'] = DB_NAME
   service['credentials'] = credentials
   [type, service]
 end
@@ -50,6 +53,7 @@ def handle_mysql(key, value, service_name_map)
   service['tags'] = ['mysql']
   credentials = {}
   credentials['uri'] = value
+  credentials['name'] = DB_NAME
   service['credentials'] = credentials
   [type, service]
 end
@@ -61,6 +65,7 @@ def handle_mongodb(key, value, service_name_map)
   service['tags'] = ['mongodb']
   credentials = {}
   credentials['url'] = value
+  credentials['name'] = DB_NAME
   service['credentials'] = credentials
   [type, service]
 end
