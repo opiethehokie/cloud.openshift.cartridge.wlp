@@ -66,6 +66,7 @@ def handle_mongodb(key, value, service_name_map)
   credentials = {}
   credentials['url'] = value
   credentials['name'] = DB_NAME
+  credentials['db'] = DB_NAME
   service['credentials'] = credentials
   [type, service]
 end

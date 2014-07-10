@@ -144,8 +144,14 @@ function stage() {
     type=$($OPENSHIFT_LIBERTY_BUILDPACK_DIR/bin/detect $OPENSHIFT_LIBERTY_DROPLET_DIR)
     echo $type
     # build droplet that contains everything needed to run app
+    set +e
     out=$($OPENSHIFT_LIBERTY_BUILDPACK_DIR/bin/compile $OPENSHIFT_LIBERTY_DROPLET_DIR $OPENSHIFT_LIBERTY_CACHE_DIR)
     echo $out
+    if [ $? -ne 0 ]; then
+      client_result "buildpack staging failed"
+      exit 1
+    fi
+    set -e
     # metadata indicating how script should be executed
     metadata=$($OPENSHIFT_LIBERTY_BUILDPACK_DIR/bin/release $OPENSHIFT_LIBERTY_DROPLET_DIR)
     echo $metadata
