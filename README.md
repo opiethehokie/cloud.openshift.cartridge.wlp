@@ -34,7 +34,7 @@ You can git push a pre-built WAR or EAR.
 
   b. Delete other app files in your git repository because they will be overriden by the WAR or EAR file when deployed
 
-2. Undeploy currently deployed content: git rm old.war
+2. Undeploy currently deployed content: `git rm old.war`
 
 ### Method 3
 
@@ -52,13 +52,25 @@ You can git push a Liberty server package.
 
 You can git push a Liberty server directory.
 
-1. Move the git repository created for your application to the server directory:
+1. Create a new git repository in the server directory, then deploy:
 
-  a. `cp -R ./.git wlp/usr/servers/<server name>/`
-
-  b. `cd wlp/usr/servers/<server name>`
-
-  c. Delete any files you do not want deployed
+  a. `cd wlp/usr/servers/<server name>`
+  
+  b. `git init`
+  
+  c. `rhc app-show`
+  
+  d. `git remote add openshift <git remote from previous command>`
+  
+  e. `git pull openshift master`
+  
+  f. Delete any extra files that are not part of the server directory you want to deploy
+  
+  g. `git add -A .`
+  
+  h. `git commit -m "descriptive message"`
+  
+  i. `git push openshift master`
   
   
 ## Database Auto-configuration
@@ -78,17 +90,6 @@ SERVICE_NAME_MAP=variableName=customName[,variableNameN=customNameN]*
 
 The `variableName` is the name of the URL environment variable exposed by the given service and the `customName` is the user-defined name for the service.
 
-## Opt-out
-
-It is possible to opt-out of service auto-configuration by setting the `services_autoconfig_excludes` environment variable. The environment variable has the following syntax:
-```
-services_autoconfig_excludes=variableName=excludeType[ variableName=excludeType]*
-```
-
-The `variableName` is one of `mongodb`, `postgresql`, or `mysql`:
-* `all` - indicates opting out of all automatic configuration for the service.
-* `config` - indicates opting out of configuration updates only.
-
 
 ## rhc Examples
 
@@ -97,7 +98,7 @@ See the [User Guide][] for more details.
 Example of creating a scalable app with a downloadable cartridge at OpenShift Online:
 
 ```bash
-rhc create-app <app name> http://cartreflect-claytondev.rhcloud.com/reflect?github=opiethehokie/openshift-liberty-buildpack-cartridge -s -e IBM_LIBERTY_LICENSE=<liberty license code> IBM_JVM_LICENSE=<jre license code>
+rhc create-app <app name> http://cartreflect-claytondev.rhcloud.com/reflect?github=opiethehokie/openshift-liberty-buildpack-cartridge -s -e IBM_LIBERTY_LICENSE=<liberty license code> -e IBM_JVM_LICENSE=<jre license code>
 ```
 
 Example of adding a database cartridge, and triggering an auto-generated server.xml update using a custom JNDI name of `psdatasource`:
@@ -108,13 +109,6 @@ rhc set-env SERVICE_NAME_MAP="OPENSHIFT_POSTGRESQL_DB_URL=psdatasource"
 rhc app-restart
 ```
 
-Example of opting-out of database auto-configuration for PostgreSQL:
-
-```bash
-rhc set-env services_autoconfig_excludes="postgresql=all"
-rhc app-restart
-```
-
 Examples of tailing logs and server config:
 
 ```bash
@@ -122,24 +116,6 @@ rhc tail --opts "-n 50"
 rhc tail -f liberty/logs/ffdc/*
 rhc tail -f liberty/droplet/.liberty/usr/servers/defaultServer/server.xml
 ```
-
-Example of triggering and viewing a thread dump:
-
-```bash
-rhc threaddump
-rhc tail -f liberty/logs/threaddump.out
-```
-
-
-## Template Repository Layout
-
-| File                                  | Purpose
-| ------------------------------------- | --------------------------------------------------------------
-| src/                                  | Example Maven source structure
-| pom.xml                               | Example Maven build file
-| .openshift/                           | Location for OpenShift specific files
-| &nbsp;&nbsp;&nbsp;&nbsp;action_hooks/ | &nbsp;&nbsp;&nbsp;&nbsp;See the [action hooks documentation][]
-| &nbsp;&nbsp;&nbsp;&nbsp;markers/      | &nbsp;&nbsp;&nbsp;&nbsp;See the Markers section below
 
 
 ## Markers
@@ -158,14 +134,10 @@ Adding marker files to .openshift/markers will have the following effects:
 
 ## Environment Variables
 
-| Variable                      | Description    
-| ----------------------------- | ----------------------------------------
-| OPENSHIFT_LIBERTY_IP          | The IP address used to bind Liberty
-| OPENSHIFT_LIBERTY_HTTP_PORT   | The Liberty listening port
-| OPENSHIFT_LIBERTY_LOG_DIR     | Where Liberty logs can be written so `rhc tail` will find them
-| OPENSHIFT_LIBERTY_TRANLOG_DIR | Persistent directory where Liberty can write the transaction recovery log
-
-These are mainly useful in the server.xml file. For more information about OpenShift environment variables, consult the [environment variable documentation][].
+| Variable  | Description    
+| ----------| ----------------------------------------
+| JVM_ARGS  | A list of JVM command line options
+| JAVA_OPTS | Appended to JVM_ARGS
 
 
 ## Developing an Application in Eclipse
@@ -210,6 +182,14 @@ If the application is scaled you can list the gears with `rhc app show <app name
 
 ## Troubleshooting
 
+Relative to your gear's home directory, the following locations may be useful:
+- `liberty/droplet/.liberty` – Liberty profile and your application files
+-	`liberty/droplet/.liberty/usr/servers/defaultServer` – The user/custom configuration directory used to store shared and server-specific configuration, i.e. WLP_USER_DIR
+-	`liberty/droplet/.java` – JRE used to run your Liberty server, i.e. JAVA_HOME
+-	`liberty/logs` – The directory containing output files for defined servers, i.e. WLP_OUTPUT_DIR
+
+### Buildpack
+
 If the problem is in the Liberty Buildpack, try enabling and viewing its log:
 
 ```bash
@@ -221,13 +201,13 @@ rhc tail -f liberty/droplet/.buildpack-diagnostics/buildpack.log
 ## Limitations
 
 1. The [Buildpack Restrictions][] 1-3 still apply to OpenShift, 4-6 are not a limitation in OpenShift.
-2. This cartridge has not been tested with all the features of the Liberty Buildpack.
+2. Opting-out of database auto-configuration does not work.
+3. This cartridge has not been tested with all the features of the Liberty Buildpack.
 
 
 [Liberty-License]: http://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/wasdev/downloads/wlp/8.5.5.2/lafiles/runtime/en.html
 [JVM-License]: http://www14.software.ibm.com/cgi-bin/weblap/lap.pl?la_formnum=&li_formnum=L-AWON-8GALN9&title=IBM%C2%AE+SDK%2C+Java-+Technology+Edition%2C+Version+7.0&l=en
 [Getting started with PaaS Eclipse integration]: https://www.openshift.com/blogs/getting-started-with-eclipse-paas-integration
-[environment variable documentation]: http://openshift.github.io/documentation/oo_user_guide.html#environment-variables
 [action hooks documentation]: http://openshift.github.io/documentation/oo_user_guide.html#action-hooks
 [User Guide]: http://openshift.github.io/documentation/oo_user_guide.html
 [Configuring secure JMX connection to the Liberty profile]: http://www-01.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.wlp.nd.doc/ae/twlp_admin_restconnector.html?cp=SSAW57_8.5.5%2F1-3-11-0-3-3-9-1&lang=en
