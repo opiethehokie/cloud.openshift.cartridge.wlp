@@ -198,6 +198,10 @@ rhc set-env JBP_LOG_LEVEL=(DEBUG|INFO|WARN|ERROR|FATAL)
 rhc tail -f liberty/droplet/.buildpack-diagnostics/buildpack.log
 ```
 
+### Dumps
+
+See [How to generate javacores, heapdumps and system cores for the WebSphere Application Server V8.5 Liberty profile][].
+
 
 ## Limitations
 
@@ -216,4 +220,4 @@ rhc tail -f liberty/droplet/.buildpack-diagnostics/buildpack.log
 [IBM WebSphere Application Server Liberty Buildpack]: https://github.com/cloudfoundry/ibm-websphere-liberty-buildpack
 [Buildpack-enabled Options for Server.xml]: https://github.com/cloudfoundry/ibm-websphere-liberty-buildpack/blob/master/docs/server-xml-options.md
 [Buildpack Restrictions]: https://github.com/cloudfoundry/ibm-websphere-liberty-buildpack/blob/master/docs/restrictions.md
-
+[How to generate javacores, heapdumps and system cores for the WebSphere Application Server V8.5 Liberty profile]: http://www-01.ibm.com/support/docview.wss?uid=swg21597830
