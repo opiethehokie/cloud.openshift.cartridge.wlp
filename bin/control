@@ -116,18 +116,6 @@ function tidy() {
   rm -rf $OPENSHIFT_LIBERTY_TRANLOG_DIR/*
 }
 
-function threaddump() {
-  if ! isrunning; then
-    echo "app is stopped"
-    exit 1
-  else
-    dump_file=$OPENSHIFT_LIBERTY_LOG_DIR/threaddump.out
-    pid=$(cat $server_pid_file);
-    jstack -l $pid >> $dump_file
-    client_result "The thread dump file is available at: $dump_file"
-  fi
-}
-
 function stage() {
   # create env that buildpack expects
   export PORT=$OPENSHIFT_LIBERTY_HTTP_PORT
@@ -235,7 +223,6 @@ case "$1" in
   build)	$OPENSHIFT_LIBERTY_DIR/bin/build ;;
   deploy)	deploy ;; 
   tidy)		tidy ;;
-  threaddump)	threaddump ;;
   status)	status ;;
   *)		exit 0
 esac
