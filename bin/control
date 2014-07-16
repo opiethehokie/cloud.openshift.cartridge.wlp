@@ -121,7 +121,7 @@ function stage() {
   export PORT=$OPENSHIFT_LIBERTY_HTTP_PORT
   export VCAP_APPLICATION={\"host\":\"$OPENSHIFT_LIBERTY_IP\"}
   export VCAP_SERVICES=$($OPENSHIFT_LIBERTY_DIR/bin/auto_config)
-  export MEMORY_LIMIT=512m
+  export MEMORY_LIMIT="$OPENSHIFT_GEAR_MEMORY_MB"m
   # service info hash so we can check if service carts have been added/removed and we need to restage
   services_hash=($(echo $VCAP_SERVICES | md5sum))
   old_services_hash=$(cat $services_hash_file) 
