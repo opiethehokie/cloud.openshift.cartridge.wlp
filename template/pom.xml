@@ -52,13 +52,6 @@
                         <version>3.0.1</version>
                         <scope>provided</scope>
                 </dependency>
-                <!-- example DB driver from redhat repository
-		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>9.2-1003-jdbc4</version>
-                        <scope>provided</scope>
-		</dependency> -->
                 <!-- example jar from liberty repository
                 <dependency>
                         <groupId>com.ibm.websphere.appserver.api</groupId>
@@ -82,7 +75,6 @@
 						<version>2.1.1</version>
 						<configuration>
 							<outputDirectory>apps</outputDirectory>
-							<warName>template</warName>
 						</configuration>
 					</plugin>
 				</plugins>
