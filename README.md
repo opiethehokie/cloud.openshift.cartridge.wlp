@@ -208,6 +208,7 @@ See [How to generate javacores, heapdumps and system cores for the WebSphere App
 1. The [Buildpack Restrictions][] 1-3 still apply to OpenShift, 4-6 are not a limitation in OpenShift.
 2. Opting-out of database auto-configuration does not work.
 3. This cartridge has not been tested with all the features of the Liberty Buildpack.
+4. The JDK used to build an application deployed from source is already provided on OpenShift gears, but is not what runs the application. The Liberty Buildpack downloads the IBM JRE or OpenJDK JRE and that is used to run the application.
 
 
 [Liberty-License]: http://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/wasdev/downloads/wlp/8.5.5.2/lafiles/runtime/en.html
