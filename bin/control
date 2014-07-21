@@ -187,7 +187,7 @@ function start() {
   if isrunning; then
     echo "app is already running"
   else
-    stage
+#    stage
     if marker_present "clean_start"; then
       server_opts="--clean"
     fi
@@ -198,15 +198,15 @@ function start() {
     echo "starting Liberty cartridge"
     jvm_args=$(join_jvm_args " " $debug_args $JVM_ARGS $JAVA_OPTS) # add in JAVA_OPTS for JRebel cart
     echo "JVM_ARGS=$jvm_args"
-    JVM_ARGS=$jvm_args JAVA_HOME=$java_dir $liberty_dir/bin/server run $server_name $server_opts 1>&2 > /dev/null &
-    mkdir -p $server_pid_dir
-    echo $! > $server_pid_file
-    rc=0
-    ishttpup || rc=$?
-    if [ $rc -eq 1 ]; then
-      echo "Timed out waiting for http listening port for Liberty"
-      exit 1
-    fi
+#    JVM_ARGS=$jvm_args JAVA_HOME=$java_dir $liberty_dir/bin/server run $server_name $server_opts 1>&2 > /dev/null &
+#    mkdir -p $server_pid_dir
+#    echo $! > $server_pid_file
+#    rc=0
+#    ishttpup || rc=$?
+#    if [ $rc -eq 1 ]; then
+#      echo "Timed out waiting for http listening port for Liberty"
+#      exit 1
+#    fi
   fi
 }
 
