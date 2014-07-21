@@ -129,7 +129,6 @@ Adding marker files to .openshift/markers will have the following effects:
 | skip_maven_build     | Maven build step will be skipped.
 | force_clean_build    | Will start the build process by removing all non-essential Maven dependencies. Any current dependencies specified in your pom.xml file will then be re-downloaded.
 | hot_deploy           | Will prevent a Liberty container restart during build/deployment.
-| clean_start          | Cleans all cached information related to your server instance at the next server start.
 | disable_auto_scaling | Disables the auto-scaling provided by OpenShift.
 
 

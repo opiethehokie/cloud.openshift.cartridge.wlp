@@ -144,14 +144,28 @@ function stage() {
     echo "generated VCAP_APPLICATION=$VCAP_APPLICATION"
     echo "generated VCAP_SERVICES=$VCAP_SERVICES"
     # verify valid app
-    type=$($OPENSHIFT_LIBERTY_BUILDPACK_DIR/bin/detect $OPENSHIFT_LIBERTY_DROPLET_DIR)
+    set +e
+    type=$($OPENSHIFT_LIBERTY_BUILDPACK_DIR/bin/detect $OPENSHIFT_LIBERTY_DROPLET_DIR 2>&1)
+    rc=$?
     echo $type
+    if [ $rc -ne 0 ]; then
+      exit 1
+    fi
     # build droplet that contains everything needed to run app
-    out=$($OPENSHIFT_LIBERTY_BUILDPACK_DIR/bin/compile $OPENSHIFT_LIBERTY_DROPLET_DIR $OPENSHIFT_LIBERTY_CACHE_DIR)
+    out=$($OPENSHIFT_LIBERTY_BUILDPACK_DIR/bin/compile $OPENSHIFT_LIBERTY_DROPLET_DIR $OPENSHIFT_LIBERTY_CACHE_DIR 2>&1)
+    rc=$?
     echo $out
+    if [ $rc -ne 0 ]; then
+      exit 1
+    fi
     # metadata indicating how script should be executed
-    metadata=$($OPENSHIFT_LIBERTY_BUILDPACK_DIR/bin/release $OPENSHIFT_LIBERTY_DROPLET_DIR)
+    metadata=$($OPENSHIFT_LIBERTY_BUILDPACK_DIR/bin/release $OPENSHIFT_LIBERTY_DROPLET_DIR 2>&1)
+    rc=$?
     echo $metadata
+    if [ $rc -ne 0 ]; then
+      exit 1
+    fi
+    set -e
     # only way server will start on openshift is with command port disabled
     echo "command.port=-1" >> $server_dir/bootstrap.properties
     # fix host - in openshift we need specific host not *
@@ -181,16 +195,13 @@ function join_jvm_args() {
 
 function start() {
   if [ -z "$IBM_LIBERTY_LICENSE" ]; then
-    echo "missing Liberty license, set IBM_LIBERTY_LICENSE env var"
-    exit 0 # in a Jenkins build this won't be set but it's okay to not stage and start
-  fi
-  if isrunning; then
+    echo "missing Liberty license, set IBM_LIBERTY_LICENSE env var" # in a Jenkins build this won't be set but it's okay to not stage and start
+  elif isrunning; then
     echo "app is already running"
+  elif [ -n "$SKIP_STAGING" ]; then
+    echo "skipping buildpack staging, app is not started"
   else
     stage
-    if marker_present "clean_start"; then
-      server_opts="--clean"
-    fi
     if marker_present "enable_jpda"; then
       debug_args=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=$OPENSHIFT_LIBERTY_IP:$OPENSHIFT_LIBERTY_JPDA_PORT
     fi
@@ -198,7 +209,7 @@ function start() {
     echo "starting Liberty cartridge"
     jvm_args=$(join_jvm_args " " $debug_args $JVM_ARGS $JAVA_OPTS) # add in JAVA_OPTS for JRebel cart
     echo "JVM_ARGS=$jvm_args"
-    JVM_ARGS=$jvm_args JAVA_HOME=$java_dir $liberty_dir/bin/server run $server_name $server_opts 1>&2 > /dev/null &
+    JVM_ARGS=$jvm_args JAVA_HOME=$java_dir $liberty_dir/bin/server run $server_name 1>&2 > /dev/null &
     mkdir -p $server_pid_dir
     echo $! > $server_pid_file
     rc=0
