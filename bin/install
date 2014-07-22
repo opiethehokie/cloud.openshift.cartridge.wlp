@@ -39,13 +39,6 @@ if [ ! -d "$OPENSHIFT_LIBERTY_BUILDPACK_DIR" ]; then
   sed -i 's/ruby/oo-ruby/g' $OPENSHIFT_LIBERTY_BUILDPACK_DIR/resources/liberty/create_vars.rb
 fi
 
-# configure openjdk
-echo "memory_heuristics:
-  heap: 0.75
-  permgen: 0.1
-  stack: 0.05
-  native: 0.1" >> $OPENSHIFT_LIBERTY_BUILDPACK_DIR/config/openjdk.yml
-
 # deploy template app (WAR deploy but WAR is already extracted)
 sed -i "s/{APP_NAME}/$OPENSHIFT_APP_NAME/g" $OPENSHIFT_LIBERTY_DIR/template/pom.xml
 cp -R $OPENSHIFT_LIBERTY_DIR/template/src/main/webapp/* $OPENSHIFT_LIBERTY_DROPLET_DIR
