@@ -20,6 +20,7 @@ require 'json'
 
 
 URL_SUFFIX = '_DB_URL'.freeze
+URL_PREFIX = 'OPENSHIFT_'.freeze
 POSTGRESQL_PREFIX = 'OPENSHIFT_POSTGRESQL_'.freeze
 MYSQL_PREFIX = 'OPENSHIFT_MYSQL_'.freeze
 MONGODB_PREFIX = 'OPENSHIFT_MONGODB_'.freeze
@@ -58,7 +59,7 @@ def handle_postgresql(key, value, service_name_map)
   credentials['uri'] = value
   credentials['name'] = DB_NAME
   service['credentials'] = credentials
-  [type, service]
+  [key, service]
 end
 
 def handle_mysql(key, value, service_name_map)
@@ -70,7 +71,7 @@ def handle_mysql(key, value, service_name_map)
   credentials['uri'] = value
   credentials['name'] = DB_NAME
   service['credentials'] = credentials
-  [type, service]
+  [key, service]
 end
 
 def handle_mongodb(key, value, service_name_map)
@@ -83,7 +84,7 @@ def handle_mongodb(key, value, service_name_map)
   credentials['name'] = DB_NAME
   credentials['db'] = DB_NAME
   service['credentials'] = credentials
-  [type, service]
+  [key, service]
 end
 
 def create_default_credentials(value)
@@ -103,8 +104,8 @@ def create_default_credentials(value)
 end
 
 def generate_name(url)
-  # remove _URL at the end & downcase it
-  name = url[0..-URL_SUFFIX.size - 1].downcase
+  # remove OPENSHIFT_ at the beginning & _URL at the end & downcase it
+  name = url[URL_PREFIX.size..-URL_SUFFIX.size - 1].downcase
   name
 end
 

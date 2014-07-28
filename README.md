@@ -83,12 +83,23 @@ OpenShift does not provide a built-in way to associate a custom name with added 
 
 In OpenShift the default names will come from the URL environment variable exposed by the database cartridge, so these would be `mongodb`, `postgresql`, and `mysql` (from `OPENSHIFT_MONGODB_DB_URL`, `OPENSHIFT_POSTGRESQL_DB_URL`, and `OPENSHIFT_MYSQL_DB_URL`). 
 
-With the Liberty Buildpack you can associate a custom name with a service using the `SERVICE_NAME_MAP` environment variable. The `SERVICE_NAME_MAP` environment variable has the following syntax:
+With the Liberty Buildpack you can associate a custom name with a service by setting the `SERVICE_NAME_MAP` environment variable. The `SERVICE_NAME_MAP` environment variable has the following syntax:
 ```
 SERVICE_NAME_MAP=variableName=customName[,variableNameN=customNameN]*
 ```
 
-The `variableName` is the name of the URL environment variable exposed by the given service and the `customName` is the user-defined name for the service.
+The `variableName` is the URL environment variable exposed by the given service and the `customName` is the user-defined name for the service.
+
+### Opting Out
+
+Opt-out of service auto-configuration by setting the `services_autoconfig_excludes` environment variable. The `services_autoconfig_excludes` environment variable has the following syntax:
+```
+services_autoconfig_excludes=variableName=excludeType[ variableName=excludeType]*
+```
+
+The `variableName` is the URL environment variable exposed by the given service and the `excludeType` is set to:
+* `all` - indicates opting out of all automatic configuration for the service.
+* `conifg` - indicates opting out of configuration updates only.
 
 
 ## rhc Examples
@@ -108,6 +119,12 @@ Example of adding a database cartridge, and triggering an auto-generated server.
 rhc cartridge-add postgresql-9.2
 rhc set-env SERVICE_NAME_MAP="OPENSHIFT_POSTGRESQL_DB_URL=psdatasource"
 rhc app-restart
+```
+
+Example of opting-out of all auto-configuration for the previously created PostgreSQL database:
+
+```bash
+rhc set-env services_autoconfig_excludes="OPENSHIFT_POSTGRESQL_DB_URL=all"
 ```
 
 Examples of tailing logs and server config:
@@ -205,9 +222,8 @@ See [How to generate javacores, heapdumps and system cores for the WebSphere App
 ## Limitations
 
 1. The [Buildpack Restrictions][] 1-3 still apply to OpenShift, 4-6 are not a limitation in OpenShift.
-2. Opting-out of database auto-configuration does not work.
-3. This cartridge has not been tested with all the features of the Liberty Buildpack.
-4. The JDK used to build an application deployed from source is already provided on OpenShift gears, but is not what runs the application. The Liberty Buildpack downloads the IBM JRE or OpenJDK JRE and that is used to run the application.
+2. This cartridge has not been tested with all the features of the Liberty Buildpack.
+3. The JDK used to build an application deployed from source is already provided on OpenShift gears, but is not what runs the application. The Liberty Buildpack downloads the IBM JRE or OpenJDK JRE and that is used to run the application.
 
 
 [Liberty-License]: http://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/wasdev/downloads/wlp/8.5.5.2/lafiles/runtime/en.html
