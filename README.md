@@ -110,7 +110,7 @@ Example of creating a scalable app with a downloadable cartridge at OpenShift On
 
 ```bash
 rhc create-app <app name> http://cartreflect-claytondev.rhcloud.com/reflect?github=opiethehokie/openshift-liberty-buildpack-cartridge -s -e IBM_LIBERTY_LICENSE=<liberty license code> -e IBM_JVM_LICENSE=<jre license code>
-rhc create-app <app name> http://cartreflect-claytondev.rhcloud.com/reflect?github=opiethehokie/openshift-liberty-buildpack-cartridge -s -e IBM_LIBERTY_LICENSE=<liberty license code> -e IBM_JVM_LICENSE=<jre license code> --from-code https://github.com/WASdev/sample.acmeair.git
+rhc create-app <app name> http://cartreflect-claytondev.rhcloud.com/reflect?github=opiethehokie/openshift-liberty-buildpack-cartridge -s -e IBM_LIBERTY_LICENSE=<liberty license code> -e JVM=openjdk --from-code https://github.com/WASdev/sample.acmeair.git
 ```
 
 Example of adding a database cartridge, and triggering an auto-generated server.xml update using a custom JNDI name of `psdatasource`:
