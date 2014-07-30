@@ -2,16 +2,21 @@
 
 Provides the Liberty profile server on OpenShift. This cartridge makes use of the [IBM WebSphere Application Server Liberty Buildpack][] for Cloud Foundry to provide a more consistent experience between clouds.
 
+It is provided unsupported, for development use only.
 
 ## Accepting the Liberty and JVM Licenses
 
-To deploy applications using the IBM WebSphere Application Server Liberty Cartridge, you are required to accept the development IBM Liberty license and IBM JRE license by following the instructions below:
+To deploy applications using the IBM WebSphere Application Server Liberty Cartridge, you are required to accept the development IBM Liberty license by following the instructions below:
 
-1. Read the current IBM [Liberty-License][] and the current IBM [JVM-License][].
-2. Extract the `D/N: <License code>` from the Liberty-License and JVM-License.
-3. Set the IBM_LIBERTY_LICENSE and IBM_JVM_LICENSE environment variables to the extracted license codes when you create your application (this must be done using the rhc command-line client because the web UI does not provide a way). 
+1. Read the current IBM [Liberty-License][].
+2. Extract the `D/N: <License code>` from the Liberty-License.
+3. Set the IBM_LIBERTY_LICENSE environment variable to the extracted license code when you create your application (this must be done using the rhc command-line client because the web UI does not provide a way). 
 
-To use OpenJDK instead of the IBM JRE set the JVM=openjdk environment variable.
+To use OpenJDK instead of the IBM JRE set the JVM=openjdk environment variable. This is recommended because the IBM JRE download and install is currently slower and sometimes is timed out by OpenShift. If you do wish to use IBM JRE, then you are also required to accept its license by following the instructions below:
+
+1. Read the current IBM [JVM-License][].
+2. Extract the `D/N: <License code>` from the JVM-License.
+3. Set the IBM_JVM_LICENSE environment variables to the extracted license code when you create your application (this must be done using the rhc command-line client because the web UI does not provide a way).
 
 
 ## Layout and Deployment Options
