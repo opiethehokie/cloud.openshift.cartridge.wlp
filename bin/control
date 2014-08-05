@@ -104,7 +104,6 @@ function extract_archives() {
 
 function deploy() {
   rm -rf $OPENSHIFT_LIBERTY_DROPLET_DIR/*
-  rm -rf $OPENSHIFT_LIBERTY_DROPLET_DIR/.[a-z]*
   touch $restage_marker
   if [ -f "$OPENSHIFT_REPO_DIR/pom.xml" ]; then
     echo "found possible build from source"
@@ -138,10 +137,11 @@ function stage() {
   export VCAP_SERVICES=$($OPENSHIFT_LIBERTY_DIR/bin/auto_config)
   export MEMORY_LIMIT="$OPENSHIFT_GEAR_MEMORY_MB"m
   # service info hash so we can check if service carts have been added/removed and we need to restage
-  services_hash=($(echo $VCAP_SERVICES | md5sum))
+  services_hash=($(echo $VCAP_SERVICES $SERVICE_NAME_MAP $services_autoconfig_excludes | md5sum))
   old_services_hash=$(cat $services_hash_file) 
   echo $services_hash > $services_hash_file
   if [ -f "$restage_marker" ] || [ "$services_hash" != "$old_services_hash" ]; then
+    rm -rf $OPENSHIFT_LIBERTY_DROPLET_DIR/.[a-z]*
     echo "generated VCAP_APPLICATION=$VCAP_APPLICATION"
     echo "generated VCAP_SERVICES=$VCAP_SERVICES"
     # verify valid app
@@ -227,6 +227,7 @@ function stop() {
   if isrunning; then
     pid=$(cat $server_pid_file);
     killtree $pid
+    sleep 3
   else
     echo "app is not running"
   fi
@@ -234,7 +235,6 @@ function stop() {
 
 function restart() {
   stop
-  sleep 2
   start
 }
 
