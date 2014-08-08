@@ -176,9 +176,10 @@ The [openshift-jrebel-cartridge][] and the Jenkins cartridge have also been test
 For the simplest configuration that will work, add the following to your server.xml when deploying a server directory or server package (replacing `user` and `pass` with your own values):
 
 ```xml
-<features>
+<featureManager>
     <feature>restConnector-1.0</feature>
-</features>
+    <feature>monitor-1.0</feature>
+</featureManager>
 
 <quickStartSecurity userName="user" userPassword="pass"/>
 
@@ -192,7 +193,7 @@ This loads the server's JMX REST connector, sets the server's keystore, creates 
 Then run the following commands (replacing the values in <>):
 
 ```bash
-rhc scp <app name> download <local dir> liberty/servers/defaultServer/resources/security/key.jks
+rhc scp <app name> download <local dir> liberty/droplet/.liberty/usr/servers/defaultServer/resources/security/key.jks
 rhc port-forward
 jconsole -J-Djava.class.path="%JAVA_HOME%/lib/jconsole.jar;%JAVA_HOME%/lib/tools.jar;%WLP_HOME%/clients/restConnector.jar" -J-Dcom.ibm.ws.jmx.connector.client.disableURLHostnameVerification=true -J-Djavax.net.ssl.trustStore=<local path>/key.jks -J-Djavax.net.ssl.trustStorePassword=Liberty -J-Djavax.net.ssl.trustStoreType=jks
 ```
