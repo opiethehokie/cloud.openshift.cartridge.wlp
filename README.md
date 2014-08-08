@@ -23,7 +23,7 @@ To use OpenJDK instead of the IBM JRE set the JVM=openjdk environment variable. 
 
 There are multiple options for deploying applications on Liberty in OpenShift. In the basic workflows below, each operation will require associated git add/commit/push operations to take effect.
 
-For methods 1 and 2, the server.xml will be automatically generated when the application changes or an additional database cartridge is added/removed and the application is restarted (see [Database Auto-configuration](#database-auto-configuration)). The context-root is `/`. For methods 3 and 4 you are providing your own server.xml. The cartridge will only attempt to modify it enough so that the server will be able to start in the OpenShift environment. For more details see [Buildpack-enabled Options for Server.xml][].
+For methods 1 and 2, the server.xml will be automatically generated when the application changes or an additional database cartridge is added/removed and the application is restarted (see [Database Auto-configuration](#database-auto-configuration)). The context-root is `/`. For methods 3 and 4 you are providing your own server including server.xml. The cartridge will only attempt to modify it enough so that the server will be able to start in the OpenShift environment. For more details see [Buildpack-enabled Options for Server.xml][].
 
 ### Method 1
 
@@ -45,7 +45,7 @@ You can git push a pre-built WAR or EAR.
 
 You can git push a Liberty server package.
 
-1. Add new zipped content and deploy it:
+1. Create the server package ZIP file and deploy it:
 
   a. Run: `wlp/bin/server package --include=usr`
 
