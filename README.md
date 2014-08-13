@@ -1,4 +1,4 @@
-# IBM WebSphere Application Server Liberty Cartridge
+# Openshift Cartridge for the WebSphere Liberty Profile
 
 Provides the Liberty profile server on OpenShift. This cartridge makes use of the [IBM WebSphere Application Server Liberty Buildpack][] for Cloud Foundry to provide a more consistent experience between clouds.
 
@@ -6,7 +6,7 @@ It is provided unsupported, for development use only.
 
 ## Accepting the Liberty and JVM Licenses
 
-To deploy applications using the IBM WebSphere Application Server Liberty Cartridge, you are required to accept the development IBM Liberty license by following the instructions below:
+To deploy applications using this cartridge, you are required to accept the development IBM Liberty license by following the instructions below:
 
 1. Read the current IBM [Liberty-License][].
 2. Extract the `D/N: <License code>` from the Liberty-License.
