@@ -232,8 +232,8 @@ See [How to generate javacores, heapdumps and system cores for the WebSphere App
 3. The JDK used to build an application deployed from source is already provided on OpenShift gears, but is not what runs the application. The Liberty Buildpack downloads the IBM JRE or OpenJDK JRE and that is used to run the application.
 
 
-[Liberty-License]: http://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/wasdev/downloads/wlp/8.5.5.2/lafiles/runtime/en.html
-[JVM-License]: http://www14.software.ibm.com/cgi-bin/weblap/lap.pl?la_formnum=&li_formnum=L-AWON-8GALN9&title=IBM%C2%AE+SDK%2C+Java-+Technology+Edition%2C+Version+7.0&l=en
+[Liberty-License]: http://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/wasdev/downloads/wlp/8.5.5.3/lafiles/runtime//en.html
+[JVM-License]: http://www14.software.ibm.com/cgi-bin/weblap/lap.pl?la_formnum=&li_formnum=L-EWOD-99YA4J&title=IBM%C2%AE+SDK%2C+Java+Technology+Edition%2C+Version+7+Release+1&l=en
 [Getting started with PaaS Eclipse integration]: https://www.openshift.com/blogs/getting-started-with-eclipse-paas-integration
 [action hooks documentation]: http://openshift.github.io/documentation/oo_user_guide.html#action-hooks
 [User Guide]: http://openshift.github.io/documentation/oo_user_guide.html
