@@ -40,7 +40,7 @@ function ishttpup() {
   count=0
   while [ ${count} -lt 64 ]
   do
-    if lsof -P -n -i "@${OPENSHIFT_LIBERTY_IP}:${OPENSHIFT_LIBERTY_HTTP_PORT}" | grep "(LISTEN)" > /dev/null; then
+    if echo 2> /dev/null > "/dev/tcp/${OPENSHIFT_LIBERTY_IP}/${OPENSHIFT_LIBERTY_HTTP_PORT}"; then
       echo "Found ${OPENSHIFT_LIBERTY_IP}:${OPENSHIFT_LIBERTY_HTTP_PORT} listening port"
       return 0
     fi
