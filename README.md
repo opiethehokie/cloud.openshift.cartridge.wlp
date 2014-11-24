@@ -156,11 +156,13 @@ Adding marker files to .openshift/markers will have the following effects:
 
 ## Environment Variables
 
-| Variable  | Description    
-| ----------| ----------------------------------------
-| JVM_ARGS  | A list of JVM command line options
-| JAVA_OPTS | Appended to JVM_ARGS
+| Variable         | Description    
+| -----------------| ----------------------------------------
+| JVM_ARGS         | Supported by the Liberty runtime
+| IBM_JAVA_OPTIONS | Supported by the IBM JRE
+| JAVA_OPTS        | Supported by the Liberty buildpack 
 
+You can also set JVM options in the jvm.options file that is part of a server package or server directory.
 
 ## Developing an Application in Eclipse
 

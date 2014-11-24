@@ -136,7 +136,7 @@ function stage() {
   export VCAP_SERVICES=$($OPENSHIFT_LIBERTY_DIR/bin/auto_config)
   export MEMORY_LIMIT="$OPENSHIFT_GEAR_MEMORY_MB"m
   # service info hash so we can check if service carts have been added/removed and we need to restage
-  services_hash=($(echo $VCAP_SERVICES $SERVICE_NAME_MAP $services_autoconfig_excludes | md5sum))
+  services_hash=($(echo $VCAP_SERVICES $SERVICE_NAME_MAP $services_autoconfig_excludes $JAVA_OPTS | md5sum))
   old_services_hash=$(cat $services_hash_file) 
   echo $services_hash > $services_hash_file
   if [ -f "$restage_marker" ] || [ "$services_hash" != "$old_services_hash" ]; then
@@ -206,7 +206,7 @@ function start() {
     fi
     # in CF the DEA would run a similar start command based on bin/release output
     echo "starting Liberty cartridge"
-    jvm_args=$(join_jvm_args " " $debug_args $JVM_ARGS $JAVA_OPTS) # add in JAVA_OPTS for JRebel cart
+    jvm_args=$(join_jvm_args " " $debug_args $JVM_ARGS)
     echo "JVM_ARGS=$jvm_args"
     pushd $OPENSHIFT_LIBERTY_DROPLET_DIR/
       JVM_ARGS=$jvm_args ./$start_script_name 1>&2 > /dev/null &
