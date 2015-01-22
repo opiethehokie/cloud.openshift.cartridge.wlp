@@ -114,8 +114,8 @@ See the [User Guide][] for more details.
 Example of creating a scalable app with a downloadable cartridge at OpenShift Online:
 
 ```bash
-rhc create-app <app name> http://cartreflect-claytondev.rhcloud.com/reflect?github=opiethehokie/openshift-liberty-cartridge -s -e IBM_LIBERTY_LICENSE=<liberty license code> -e IBM_JVM_LICENSE=<jre license code>
-rhc create-app <app name> http://cartreflect-claytondev.rhcloud.com/reflect?github=opiethehokie/openshift-liberty-cartridge -s -e IBM_LIBERTY_LICENSE=<liberty license code> -e JVM=openjdk --from-code https://github.com/WASdev/sample.acmeair.git
+rhc create-app <app name> http://cartreflect-claytondev.rhcloud.com/reflect?github=WASdev/cloud.openshift.cartridge.wlp -s -e IBM_LIBERTY_LICENSE=<liberty license code> -e IBM_JVM_LICENSE=<jre license code>
+rhc create-app <app name> http://cartreflect-claytondev.rhcloud.com/reflect?github=WASdev/cloud.openshift.cartridge.wlp -s -e IBM_LIBERTY_LICENSE=<liberty license code> -e JVM=openjdk --from-code https://github.com/WASdev/sample.acmeair.git
 ```
 
 Example of adding a database cartridge, and triggering an auto-generated server.xml update using a custom JNDI name of `psdatasource`:
@@ -156,11 +156,13 @@ Adding marker files to .openshift/markers will have the following effects:
 
 ## Environment Variables
 
-| Variable  | Description    
-| ----------| ----------------------------------------
-| JVM_ARGS  | A list of JVM command line options
-| JAVA_OPTS | Appended to JVM_ARGS
+| Variable         | Description    
+| -----------------| ----------------------------------------
+| JVM_ARGS         | Supported by the Liberty runtime
+| IBM_JAVA_OPTIONS | Supported by the IBM JRE
+| JAVA_OPTS        | Supported by the Liberty buildpack 
 
+You can also set JVM options in the jvm.options file that is part of a server package or server directory.
 
 ## Developing an Application in Eclipse
 
@@ -203,6 +205,13 @@ The URL JConsole is looking for will then be `service:jmx:rest://localhost:port/
 If the application is scaled you can list the gears with `rhc app show <app name> --gears`. Then for the secondary gears you'll have to use regular scp (not rhc scp) to get key.jks from the listed SSH URL and use `rhc port-forward -g <gear id>`.
 
 
+## HTTP Sessions
+
+When session data must be maintained across a server restart or an unexpected server failure, you can configure the Liberty profile to persist the session data to a database. This configuration allows multiple servers to share the same session data, and session data can be recovered in the event of a failover.
+
+See [Configuring session persistence for the Liberty profile][] for details and deploy a server package or server directory.
+
+
 ## Troubleshooting
 
 Relative to your gear's home directory, the following locations may be useful:
@@ -243,3 +252,4 @@ See [How to generate javacores, heapdumps and system cores for the WebSphere App
 [Buildpack-enabled Options for Server.xml]: https://github.com/cloudfoundry/ibm-websphere-liberty-buildpack/blob/master/docs/server-xml-options.md
 [Buildpack Restrictions]: https://github.com/cloudfoundry/ibm-websphere-liberty-buildpack/blob/master/docs/restrictions.md
 [How to generate javacores, heapdumps and system cores for the WebSphere Application Server V8.5 Liberty profile]: http://www-01.ibm.com/support/docview.wss?uid=swg21597830
+[Configuring session persistence for the Liberty profile]: http://www-01.ibm.com/support/knowledgecenter/SSD28V_8.5.5/com.ibm.websphere.wlp.nd.doc/ae/twlp_admin_session_persistence.html
