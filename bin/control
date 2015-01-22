@@ -193,9 +193,7 @@ function join_jvm_args() {
 }
 
 function start() {
-  if [ -z "$IBM_LIBERTY_LICENSE" ]; then
-    echo "missing Liberty license, set IBM_LIBERTY_LICENSE env var" # in a Jenkins build this won't be set but it's okay to not stage and start
-  elif isrunning; then
+  if isrunning; then
     echo "app is already running"
   elif [ -n "$SKIP_STAGING" ]; then
     echo "skipping buildpack staging, app is not started"
