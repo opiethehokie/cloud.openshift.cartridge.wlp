@@ -20,7 +20,7 @@ Description: "Openshift Cartridge for the WebSphere Liberty Profile."
 Version: '8.5.5'
 Vendor: IBM
 Cartridge-Version: 0.0.2
-Source-Url: https://github.com/opiethehokie/cloud.openshift.cartridge.wlp.git
+Source-Url: https://github.com/WASdev/cloud.openshift.cartridge.wlp.git
 Scaling:
   Min: 1
   Max: -1
