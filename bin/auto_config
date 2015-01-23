@@ -26,6 +26,8 @@ MONGODB_PREFIX = 'OPENSHIFT_MONGODB_'.freeze
 
 DB_NAME = ENV['OPENSHIFT_APP_NAME'].freeze
 
+NEWRELIC = 'NEWRELIC_LICENSE'.freeze
+
 def generate_vcap_services(env)
   vcap_services = {}
   service_name_map = parse_service_name_map(env)
@@ -43,6 +45,9 @@ def generate_vcap_services(env)
         service['name'] = service_name_map[key] || generate_name(key)
         service['credentials'] = create_default_credentials(value)
       end
+      vcap_services[type] = [service]
+    elsif key == NEWRELIC
+      type, service = handle_newrelic(value)
       vcap_services[type] = [service]
     end
   end
@@ -84,6 +89,17 @@ def handle_mongodb(key, value, service_name_map)
   credentials['db'] = DB_NAME
   service['credentials'] = credentials
   [key, service]
+end
+
+def handle_newrelic(key)
+  type = 'newrelic'
+  service = {}
+  service['name'] = type
+  service['label'] = 'user-provided'
+  credentials = {}
+  credentials['licenseKey'] = key
+  service['credentials'] = credentials
+  [type, service]
 end
 
 def create_default_credentials(value)

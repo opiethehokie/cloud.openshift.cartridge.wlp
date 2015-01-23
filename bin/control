@@ -132,11 +132,11 @@ function tidy() {
 function stage() {
   # create env that buildpack expects
   export PORT=$OPENSHIFT_LIBERTY_HTTP_PORT
-  export VCAP_APPLICATION={\"host\":\"$OPENSHIFT_LIBERTY_IP\"}
+  export VCAP_APPLICATION={\"host\":\"$OPENSHIFT_LIBERTY_IP\"\,\"application_name\":\"$OPENSHIFT_APP_NAME\"}
   export VCAP_SERVICES=$($OPENSHIFT_LIBERTY_DIR/bin/auto_config)
   export MEMORY_LIMIT="$OPENSHIFT_GEAR_MEMORY_MB"m
   # service info hash so we can check if service carts have been added/removed and we need to restage
-  services_hash=($(echo $VCAP_SERVICES $SERVICE_NAME_MAP $services_autoconfig_excludes $JAVA_OPTS | md5sum))
+  services_hash=($(echo $VCAP_SERVICES $SERVICE_NAME_MAP $services_autoconfig_excludes $JAVA_OPTS $NEWRELIC_LICENSE | md5sum))
   old_services_hash=$(cat $services_hash_file) 
   echo $services_hash > $services_hash_file
   if [ -f "$restage_marker" ] || [ "$services_hash" != "$old_services_hash" ]; then
