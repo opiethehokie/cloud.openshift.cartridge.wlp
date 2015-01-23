@@ -172,6 +172,8 @@ The OpenShift Eclipse plugin, JBoss Tools, can co-exist with with WebSphere Deve
 
 The [openshift-jrebel-cartridge][] and the Jenkins cartridge have also been tested with this cartirdge.
 
+There is built-in support for New Relic (no additional cartridge needed). Set the NEW_RELIC_LICENSE environment variable to your license key and the Java agent will be installed when the app is restarted.
+
 
 ## Remote JMX Connections
 
