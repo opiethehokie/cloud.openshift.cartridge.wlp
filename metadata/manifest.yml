@@ -19,7 +19,9 @@ Cartridge-Vendor: ibm
 Description: "Openshift Cartridge for the WebSphere Liberty Profile."
 Version: '8.5.5'
 Vendor: IBM
-Cartridge-Version: 0.0.2
+Cartridge-Version: 0.0.3
+Compatible-Versions:
+- 0.0.2
 Scaling:
   Min: 1
   Max: -1
@@ -28,20 +30,30 @@ Categories:
   - java
   - service
   - liberty
+  - java_ee_6
+Website: http://www-03.ibm.com/software/products/en/appserv-was-liberty-core
+Help-Topics:
+  Developer Center: https://developer.ibm.com/wasdev/
+Provides:
+- liberty
+- liberty-8.5.5
+- ibmjre
+- ibmjre-7
 Endpoints:
-  - Private-IP-Name:   IP
+  - Private-IP-Name: IP
     Private-Port-Name: HTTP_PORT
-    Private-Port:      8080
-    Public-Port-Name:  HTTP_PROXY_PORT
+    Private-Port: 8080
+    Public-Port-Name: HTTP_PROXY_PORT
     WebSocket-Port-Name: WEBSOCKET_PORT
     WebSocket-Port: 8080
     Protocols:
       - http
       - ws
     Mappings:
-      - Frontend:      ""
-        Backend:       ""
-        Options:       { websocket: true }
+      - Frontend: ""
+        Backend: ""
+        Options:
+          websocket: true
   - Private-IP-Name: IP
     Private-Port-Name: JPDA_PORT
     Private-Port: 8787  

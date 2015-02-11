@@ -12,7 +12,7 @@ To deploy applications using this cartridge, you are required to accept the deve
 2. Extract the `D/N: <License code>` from the Liberty-License.
 3. Set the IBM_LIBERTY_LICENSE environment variable to the extracted license code when you create your application (this must be done using the rhc command-line client because the web UI does not provide a way). 
 
-To use OpenJDK instead of the IBM JRE set the JVM=openjdk environment variable. This is recommended because the IBM JRE download and install is currently slower and sometimes is timed out by OpenShift. If you do wish to use IBM JRE, then you are also required to accept its license by following the instructions below:
+To use a OpenJDK JRE instead of an IBM JRE set the JVM=openjdk environment variable. This is recommended because the IBM JRE download and install is currently slower and sometimes is timed out by OpenShift. If you do wish to use IBM JRE, then you are also required to accept its license by following the instructions below:
 
 1. Read the current IBM [JVM-License][].
 2. Extract the `D/N: <License code>` from the JVM-License.
@@ -23,11 +23,11 @@ To use OpenJDK instead of the IBM JRE set the JVM=openjdk environment variable. 
 
 There are multiple options for deploying applications on Liberty in OpenShift. In the basic workflows below, each operation will require associated git add/commit/push operations to take effect.
 
-For methods 1 and 2, the server.xml will be automatically generated when the application changes or an additional database cartridge is added/removed and the application is restarted (see [Database Auto-configuration](#database-auto-configuration)). The context-root is `/`. For methods 3 and 4 you are providing your own server including server.xml. The cartridge will only attempt to modify it enough so that the server will be able to start in the OpenShift environment. For more details see [Buildpack-enabled Options for Server.xml][].
+For methods 1 and 2, the server.xml will be automatically generated when the application changes, or environment variables the cartridge uses are changed and the application is restarted (for an example of the latter see [Database Auto-configuration](#database-auto-configuration)). The context-root of the application is configured to be `/`. For methods 3 and 4 you are providing your own server including a server.xml. The cartridge will only attempt to modify it enough so that the server will be able to start in the OpenShift environment (for more details see [Buildpack-enabled Options for Server.xml][]).
 
 ### Method 1
 
-You can upload your content in a Maven src structure as in the sample project and on git push have the application built and deployed. For this to work you'll need your pom.xml at the root of your repository and a maven-war-plugin like in this sample to move the output from the build to the apps/ directory.
+You can upload your content in a Maven src structure as in the sample project and on git push have the application built and deployed. For this to work you'll need your pom.xml at the root of your repository and a maven-war-plugin like in the sample to move the output from the build to the `apps` directory.
 
 ### Method 2
 
@@ -37,7 +37,7 @@ You can git push a pre-built WAR or EAR.
 
   a. `cp target/example.war ./`
 
-  b. Delete other app files in your git repository because they will be overriden by the WAR or EAR file when deployed
+  b. Delete other application files in your git repository because they will be overriden by the WAR or EAR file when deployed
 
 2. Undeploy currently deployed content: `git rm old.war`
 
@@ -51,7 +51,7 @@ You can git push a Liberty server package.
 
   b. Run: `cp wlp/usr/servers/<server name>/<server name>.zip ./`
 
-  c. Delete other app files in your git repository because they will be overriden by the server package when deployed
+  c. Delete other application files in your git repository because they will be overriden by the server package when deployed
 
 ### Method 4
 
@@ -71,16 +71,10 @@ You can git push a Liberty server directory.
   
   f. Delete any extra files that are not part of the server directory you want to deploy
   
-  g. `git add -A .`
-  
-  h. `git commit -m "descriptive message"`
-  
-  i. `git push openshift master`
-  
   
 ## Database Auto-configuration
 
-The Liberty Buildpack performs auto-configuration for a subset of services and this cartridge utilizes that. In OpenShift, that means auto-configuration for the database cartridges for MongoDB, PostgreSQL, and MySQL. The buildpack will automatically download appropriate client drivers and update the server.xml configuration file with the right information for a given service.
+The Liberty Buildpack performs auto-configuration for a subset of services and this cartridge utilizes that. In OpenShift, that means auto-configuration for the database cartridges including MongoDB, PostgreSQL, and MySQL. The buildpack will automatically download appropriate client drivers and update the server.xml configuration file with the right information for a given service based on the environment variables those cartridges set.
 
 ### Service Names
 
@@ -107,11 +101,11 @@ The `variableName` is the URL environment variable exposed by the given service 
 * `conifg` - indicates opting out of configuration updates only.
 
 
-## rhc Examples
+## rhc CLI Examples
 
 See the [User Guide][] for more details.
 
-Example of creating a scalable app with a downloadable cartridge at OpenShift Online:
+Examples of creating a scalable application with a downloadable cartridge at OpenShift Online:
 
 ```bash
 rhc create-app <app name> http://cartreflect-claytondev.rhcloud.com/reflect?github=WASdev/cloud.openshift.cartridge.wlp -s -e IBM_LIBERTY_LICENSE=<liberty license code> -e IBM_JVM_LICENSE=<jre license code>
@@ -143,7 +137,7 @@ rhc tail -f liberty/droplet/.liberty/usr/servers/defaultServer/server.xml
 
 ## Markers
 
-Adding marker files to .openshift/markers will have the following effects:
+Adding marker files to the application's `.openshift/markers` directory will have the following effects:
 
 | Marker               | Effect
 | -------------------- | --------------------------------------------------
@@ -160,19 +154,21 @@ Adding marker files to .openshift/markers will have the following effects:
 | -----------------| ----------------------------------------
 | JVM_ARGS         | Supported by the Liberty runtime
 | IBM_JAVA_OPTIONS | Supported by the IBM JRE
-| JAVA_OPTS        | Supported by the Liberty buildpack 
+| JAVA_OPTS        | Supported by the Liberty buildpack
+| JVM              | See [Accepting the Liberty and JVM Licenses](#accepting-the-liberty-and-jvm-licenses) 
+| NEWRELIC_LICENSE | See [Developing an Application in Eclipse](#developing-an-application-in-eclipse)
+| SERVICE_NAME_MAP | See [Service Names](#service-names)
+| services_autoconfig_excludes | See [Opting Out](#opting-out)
 
 You can also set JVM options in the jvm.options file that is part of a server package or server directory.
 
 ## Developing an Application in Eclipse
 
-See [Getting started with PaaS Eclipse integration][]. If you are using OpenShift Online this cartridge will not be available when you are creating an app in Eclipse. Create the app with rhc then use the existing application in Eclipse. It may be necessary to increase the Git remote connection timeout at Window -> Preferences -> Team -> Git.
+See [Getting started with PaaS Eclipse integration][]. If you are using OpenShift Online this cartridge will not be available when you are creating an application in Eclipse. Create the application with the rhc command-line client then use the existing application in Eclipse. It may be necessary to increase the Git remote connection timeout at Window -> Preferences -> Team -> Git.
 
-The OpenShift Eclipse plugin, JBoss Tools, can co-exist with with WebSphere Development Tools (WDT). The port-forwarding provided by OpenShift also provides a way to run the app locally on Liberty while still using your databases in the cloud, and to remotely debug an app running in the cloud.
+The JBoss Tools OpenShift Eclipse plugin can co-exist with the WebSphere Development Tools (WDT) Eclipse plugin. The port-forwarding provided by OpenShift also provides a way to run the application locally on Liberty while still using your databases in the cloud, and to remotely debug an application running in the cloud.
 
-The [openshift-jrebel-cartridge][] and the Jenkins cartridge have also been tested with this cartirdge.
-
-There is built-in support for New Relic (no additional cartridge needed). Set the NEW_RELIC_LICENSE environment variable to your license key and the Java agent will be installed when the app is restarted.
+There is also built-in support for New Relic and JRebel (no additional cartridges needed). Set the `NEW_RELIC_LICENSE` environment variable to your license key and the New Relic Java agent will be attached when the application is restarted. The JRebel Java agent will be attached when there is a `WEB-INF/classes/rebel-remote.xml` file present in a WAR application.
 
 
 ## Remote JMX Connections
@@ -194,7 +190,7 @@ For the simplest configuration that will work, add the following to your server.
 
 This loads the server's JMX REST connector, sets the server's keystore, creates a single administrator user role, and sets the header that indicates a HTTPS connection (because SSL is terminated before the application). See [Configuring secure JMX connection to the Liberty profile][] for more detailed documentation. 
 
-Then run the following commands (replacing the values in <>):
+Then run the following commands (replacing the values in <> and the JAVA_HOME/WLP_HOME environment variables as necessary):
 
 ```bash
 rhc scp <app name> download <local dir> liberty/droplet/.liberty/usr/servers/defaultServer/resources/security/key.jks
@@ -212,6 +208,33 @@ If the application is scaled you can list the gears with `rhc app show <app name
 When session data must be maintained across a server restart or an unexpected server failure, you can configure the Liberty profile to persist the session data to a database. This configuration allows multiple servers to share the same session data, and session data can be recovered in the event of a failover.
 
 See [Configuring session persistence for the Liberty profile][] for details and deploy a server package or server directory.
+
+
+## WebSockets
+
+The OpenShift WebSocket port is 8000 not 80.
+
+
+## Installing the Cartridge into your own OpenShift
+
+1. `git clone https://github.com/WASdev/cloud.openshift.cartridge.wlp.git`
+2. `cd cloud.openshift.cartridge.wlp`
+3. `git clone https://github.com/cloudfoundry/ibm-websphere-liberty-buildpack`
+4. `chmod 755 ibm-websphere-liberty-buildpack/resources/download_buildpack_cache.rb`
+5. Follow steps 5-7 at https://github.com/cloudfoundry/ibm-websphere-liberty-buildpack/blob/master/docs/forking.md to point the buildpack at your own Liberty and JRE binaries (optional - the default binaries downloaded are for development only)
+6. `ibm-websphere-liberty-buildpack/resources/download_buildpack_cache.rb cache`
+7. Disable remote downloads by editing ibm-websphere-liberty-buildpack/config/cache.yml (optional)
+8. Create ibm-websphere-liberty-buildpack/config/licenses.yml as described at https://github.com/cloudfoundry/ibm-websphere-liberty-buildpack/blob/master/docs/installation.md (optional - removes need to set environment variables for each application)
+9. `cd ..`
+10. `oo-admin-cartridge -a install -s cloud.openshift.cartridge.wlp/`
+11. `oo-admin-ctl-cartridge --activate -c import-node --obsolete`
+12. `oo-admin-broker-cache --console --clear`
+13. Verify cartridge installed: `rhc cartridges`
+
+
+## Uninstalling the Cartridge from your own OpenShift
+
+1. `oo-admin-ctl-cartridge -c delete -n ibm-liberty-8.5.5`
 
 
 ## Troubleshooting
@@ -238,9 +261,10 @@ See [How to generate javacores, heapdumps and system cores for the WebSphere App
 
 ## Limitations
 
-1. The [Buildpack Restrictions][] 1-3 still apply to OpenShift, 4-6 are not a limitation in OpenShift.
+1. The [Buildpack Restrictions][] still apply to OpenShift with the exception of 6 (see [Remote JMX Connections](#remote-jmx-connections)).
 2. This cartridge has not been tested with all the features of the Liberty Buildpack.
 3. The JDK used to build an application deployed from source is already provided on OpenShift gears, but is not what runs the application. The Liberty Buildpack downloads the IBM JRE or OpenJDK JRE and that is used to run the application.
+4. The JRebel support doesn't work on a scaled application.
 
 
 [Liberty-License]: http://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/wasdev/downloads/wlp/8.5.5.3/lafiles/runtime//en.html
@@ -249,7 +273,6 @@ See [How to generate javacores, heapdumps and system cores for the WebSphere App
 [action hooks documentation]: http://openshift.github.io/documentation/oo_user_guide.html#action-hooks
 [User Guide]: http://openshift.github.io/documentation/oo_user_guide.html
 [Configuring secure JMX connection to the Liberty profile]: http://www-01.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.wlp.nd.doc/ae/twlp_admin_restconnector.html?cp=SSAW57_8.5.5%2F1-3-11-0-3-3-9-1&lang=en
-[openshift-jrebel-cartridge]: https://github.com/openshift-cartridges/openshift-jrebel-cartridge
 [IBM WebSphere Application Server Liberty Buildpack]: https://github.com/cloudfoundry/ibm-websphere-liberty-buildpack
 [Buildpack-enabled Options for Server.xml]: https://github.com/cloudfoundry/ibm-websphere-liberty-buildpack/blob/master/docs/server-xml-options.md
 [Buildpack Restrictions]: https://github.com/cloudfoundry/ibm-websphere-liberty-buildpack/blob/master/docs/restrictions.md

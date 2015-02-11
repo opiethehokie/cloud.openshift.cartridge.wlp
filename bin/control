@@ -125,8 +125,6 @@ function deploy() {
 function tidy() {
   client_message "deleting Liberty logs in default dir: $OPENSHIFT_LIBERTY_LOG_DIR"
   rm -rf $OPENSHIFT_LIBERTY_LOG_DIR/*
-  client_message "deleting Liberty transaction logs in default dir: $OPENSHIFT_LIBERTY_TRANLOG_DIR"
-  rm -rf $OPENSHIFT_LIBERTY_TRANLOG_DIR/*
 }
 
 function stage() {
@@ -136,7 +134,7 @@ function stage() {
   export VCAP_SERVICES=$($OPENSHIFT_LIBERTY_DIR/bin/auto_config)
   export MEMORY_LIMIT="$OPENSHIFT_GEAR_MEMORY_MB"m
   # service info hash so we can check if service carts have been added/removed and we need to restage
-  services_hash=($(echo $VCAP_SERVICES $SERVICE_NAME_MAP $services_autoconfig_excludes $JAVA_OPTS $NEWRELIC_LICENSE | md5sum))
+  services_hash=($(echo $VCAP_SERVICES $SERVICE_NAME_MAP $services_autoconfig_excludes $JAVA_OPTS $NEWRELIC_LICENSE $JVM | md5sum))
   old_services_hash=$(cat $services_hash_file) 
   echo $services_hash > $services_hash_file
   if [ -f "$restage_marker" ] || [ "$services_hash" != "$old_services_hash" ]; then
@@ -174,9 +172,6 @@ function stage() {
     echo "command.port=-1" >> $server_dir/bootstrap.properties
     # fix host - in openshift we need specific host not *
     sed -i 's/host="\*"/host="${host}"/g' $server_dir/server.xml
-    # distributed transactions work in openshift
-    sed -i '/-Dcom.ibm.tx.jta.disable2PC=true/d' $server_dir/jvm.options
-    sed -i "s|</server>|<transaction transactionLogDirectory=\"$OPENSHIFT_LIBERTY_TRANLOG_DIR\" /></server>|g" $server_dir/server.xml
     # staging complete
     rm -rf $restage_marker
   fi
