@@ -150,9 +150,8 @@ function stage() {
       exit 1
     fi
     # build droplet that contains everything needed to run app
-    out=$($OPENSHIFT_LIBERTY_BUILDPACK_DIR/bin/compile $OPENSHIFT_LIBERTY_DROPLET_DIR $OPENSHIFT_LIBERTY_CACHE_DIR 2>&1)
+    $OPENSHIFT_LIBERTY_BUILDPACK_DIR/bin/compile $OPENSHIFT_LIBERTY_DROPLET_DIR $OPENSHIFT_LIBERTY_CACHE_DIR
     rc=$?
-    echo $out
     if [ $rc -ne 0 ]; then
       exit 1
     fi
