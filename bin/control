@@ -93,7 +93,7 @@ function extract_archives() {
   for f in $1/*
   do
     if [ -f $f ] && [[ $f =~ \.war$ ]] || [[ $f =~ \.ear$ ]]; then
-      echo "found $f"
+      echo "extracting $f"
       pushd $OPENSHIFT_LIBERTY_DROPLET_DIR 1> /dev/null
         jar xf $f
       popd 1> /dev/null
@@ -104,21 +104,16 @@ function extract_archives() {
 function deploy() {
   rm -rf $OPENSHIFT_LIBERTY_DROPLET_DIR/*
   touch $restage_marker
-  if [ -f "$OPENSHIFT_REPO_DIR/pom.xml" ]; then
-    echo "found possible build from source"
+  # binary deployments and apps built with maven
+  if [ -d "$OPENSHIFT_REPO_DIR/apps" ]; then
     extract_archives $OPENSHIFT_REPO_DIR/apps 
-  elif ls $OPENSHIFT_REPO_DIR/*.zip 1>&2 > /dev/null; then
-    echo "found possible server package"
-    unzip -q $(ls $OPENSHIFT_REPO_DIR/*.zip) -d $OPENSHIFT_LIBERTY_DROPLET_DIR
-    mv $OPENSHIFT_LIBERTY_DROPLET_DIR/wlp/usr/servers/* $OPENSHIFT_LIBERTY_DROPLET_DIR/wlp/usr/servers/$server_name
-    rm -rf $server_dir/logs
-    rm -rf $server_dir/workarea
-  elif [ -f "$OPENSHIFT_REPO_DIR/server.xml" ]; then
-    echo "found possible server directory"
-    rsync -r --exclude ".*" $OPENSHIFT_REPO_DIR/ $OPENSHIFT_LIBERTY_DROPLET_DIR/
+  # expanded WARs/EARs, server directories, server packages
   else
-    echo "found possible WAR or EAR"
-    extract_archives $OPENSHIFT_REPO_DIR
+    rsync -r --exclude ".*" $OPENSHIFT_REPO_DIR/ $OPENSHIFT_LIBERTY_DROPLET_DIR/
+    # override package server name with defaultServer
+    if [ -d "$OPENSHIFT_LIBERTY_DROPLET_DIR/wlp" ]; then
+      mv $OPENSHIFT_LIBERTY_DROPLET_DIR/wlp/usr/servers/* $OPENSHIFT_LIBERTY_DROPLET_DIR/wlp/usr/servers/$server_name  
+    fi
   fi
 }
 
