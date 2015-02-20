@@ -23,7 +23,7 @@ To use a OpenJDK JRE instead of an IBM JRE set the JVM=openjdk environment varia
 
 There are multiple options for deploying applications on Liberty in OpenShift. In the basic workflows below, each operation will require associated git add/commit/push operations to take effect.
 
-For methods 1 and 2, the server.xml will be automatically generated when the application changes, or environment variables the cartridge uses are changed and the application is restarted (for an example of the latter see [Database Auto-configuration](#database-auto-configuration)). The context-root of the application is configured to be `/`. For methods 3 and 4 you are providing your own server including a server.xml. The cartridge will only attempt to modify it enough so that the server will be able to start in the OpenShift environment (for more details see [Buildpack-enabled Options for Server.xml][]).
+For methods 1 and 2 and 5, the server.xml will be automatically generated when the application changes, or environment variables the cartridge uses are changed and the application is restarted (for an example of the latter see [Database Auto-configuration](#database-auto-configuration)). The context-root of the application is configured to be `/`. For methods 3 and 4 you are providing your own server including a server.xml. The cartridge will only attempt to modify it enough so that the server will be able to start in the OpenShift environment (for more details see [Buildpack-enabled Options for Server.xml][]).
 
 ### Method 1
 
@@ -31,15 +31,13 @@ You can upload your content in a Maven src structure as in the sample project an
 
 ### Method 2
 
-You can git push a pre-built WAR or EAR.
+You can git push a pre-built WAR or EAR that has been expanded.
 
 1. Add new zipped content and deploy it: 
 
-  a. `cp target/example.war ./`
+  a. `unzip target/example.war -d ./`
 
   b. Delete other application files in your git repository because they will be overriden by the WAR or EAR file when deployed
-
-2. Undeploy currently deployed content: `git rm old.war`
 
 ### Method 3
 
@@ -47,9 +45,9 @@ You can git push a Liberty server package.
 
 1. Create the server package ZIP file and deploy it:
 
-  a. Run: `wlp/bin/server package --include=usr`
+  a. `wlp/bin/server package --include=usr`
 
-  b. Run: `cp wlp/usr/servers/<server name>/<server name>.zip ./`
+  b. `unzip wlp/usr/servers/<server name>/<server name>.zip -d ./`
 
   c. Delete other application files in your git repository because they will be overriden by the server package when deployed
 
@@ -70,6 +68,22 @@ You can git push a Liberty server directory.
   e. `git pull openshift master`
   
   f. Delete any extra files that are not part of the server directory you want to deploy
+
+### Method 5
+
+You can do a binary deployment of a WAR or EAR file.
+
+1. Create a TAR file containing the WAR or EAR and deploy it:
+
+  a. In an empty directory, run: `mkdir -p repo/apps`
+
+  b. `cp target/example.war repo/apps/`
+
+  c. `tar -czf example.tar.gz *`
+
+  d. `rhc app-configure <app name> --deployment-type binary`
+
+  e. `rhc deploy <app name> example.tar.gz
   
   
 ## Database Auto-configuration
