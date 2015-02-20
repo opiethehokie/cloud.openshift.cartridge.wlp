@@ -92,7 +92,7 @@ function status() {
 function extract_archives() {
   for f in $1/*
   do
-    if [[ $f =~ \.war$ ]] || [[ $f =~ \.ear$ ]]; then
+    if [ -f $f ] && [[ $f =~ \.war$ ]] || [[ $f =~ \.ear$ ]]; then
       echo "found $f"
       pushd $OPENSHIFT_LIBERTY_DROPLET_DIR 1> /dev/null
         jar xf $f
