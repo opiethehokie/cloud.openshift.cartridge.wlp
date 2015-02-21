@@ -105,7 +105,7 @@ function deploy() {
   rm -rf $OPENSHIFT_LIBERTY_DROPLET_DIR/*
   touch $restage_marker
   # binary deployments and apps built with maven
-  if [ -d "$OPENSHIFT_REPO_DIR/apps" ]; then
+  if [ -d "$OPENSHIFT_REPO_DIR/apps" ] && [ ! -f "$OPENSHIFT_REPO_DIR/server.xml" ]; then
     extract_archives $OPENSHIFT_REPO_DIR/apps 
   # expanded WARs/EARs, server directories, server packages
   else
