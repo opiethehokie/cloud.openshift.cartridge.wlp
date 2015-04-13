@@ -20,7 +20,7 @@ java_dir=$OPENSHIFT_LIBERTY_DROPLET_DIR/.java
 server_name=defaultServer
 server_pid_dir=$liberty_dir/usr/servers/.pid
 server_pid_file=$server_pid_dir/$server_name.pid
-server_dir=$liberty_dir/usr/servers/$server_name
+server_dir=$OPENSHIFT_LIBERTY_DROPLET_DIR/wlp/usr/servers/$server_name
 services_hash_file=$OPENSHIFT_LIBERTY_DIR/.services
 restage_marker=$OPENSHIFT_LIBERTY_DIR/.app
 start_script_name=.start_cmd
@@ -165,6 +165,7 @@ function stage() {
     # only way server will start on openshift is with command port disabled
     echo "command.port=-1" >> $server_dir/bootstrap.properties
     # fix host - in openshift we need specific host not *
+    sed -i "s/host='\*'/host='\${host}'/g" $server_dir/server.xml
     sed -i 's/host="\*"/host="${host}"/g' $server_dir/server.xml
     # staging complete
     rm -rf $restage_marker
