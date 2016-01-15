@@ -240,15 +240,16 @@ The OpenShift WebSocket port is 8000 not 80.
 7. Disable remote downloads by editing ibm-websphere-liberty-buildpack/config/cache.yml (optional)
 8. Create ibm-websphere-liberty-buildpack/config/licenses.yml as described at https://github.com/cloudfoundry/ibm-websphere-liberty-buildpack/blob/master/docs/installation.md (optional - removes need to set environment variables for each application)
 9. `cd ..`
-10. `oo-admin-cartridge -a install -s cloud.openshift.cartridge.wlp/`
-11. `oo-admin-ctl-cartridge --activate -c import-node --obsolete`
-12. `oo-admin-broker-cache --console --clear`
-13. Verify cartridge installed: `rhc cartridges`
+10. On each node host run: `oo-admin-cartridge --action install --source cloud.openshift.cartridge.wlp/` and `service ruby193-mcollective restart` 
+11. On the broker host run: `oo-admin-broker-cache --clear --console` and `oo-admin-ctl-cartridge -c import-node --activate` and `oo-admin-console-cache --clear`
+12. Verify cartridge installed: `rhc cartridges`
 
 
 ## Uninstalling the Cartridge from your own OpenShift
 
-1. `oo-admin-ctl-cartridge -c delete -n ibm-liberty-8.5.5`
+1. On the broker host run: `oo-admin-ctl-cartridge -c deactivate --name ibm-liberty-8.5.5`
+2. On each node host run: `oo-admin-cartridge --action erase --name ibm-liberty-8.5.5 --version 8.5.5 --cartridge_version <Cart_Version_Number>`
+3. On the broker host run: `oo-admin-broker-cache --clear --console` and `oo-admin-console-cache --clear`
 
 
 ## Troubleshooting
