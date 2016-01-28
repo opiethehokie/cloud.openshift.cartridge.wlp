@@ -248,7 +248,7 @@ The OpenShift WebSocket port is 8000 not 80.
 ## Uninstalling the Cartridge from your own OpenShift
 
 1. On the broker host run: `oo-admin-ctl-cartridge -c deactivate --name ibm-liberty-8.5.5`
-2. On each node host run: `oo-admin-cartridge --action erase --name ibm-liberty-8.5.5 --version 8.5.5 --cartridge_version <Cart_Version_Number>`
+2. On each node host run: `oo-admin-cartridge --action erase --name liberty --version 8.5.5 --cartridge_version <Cart_Version_Number>`
 3. On the broker host run: `oo-admin-broker-cache --clear --console` and `oo-admin-console-cache --clear`
 
 
