@@ -236,7 +236,7 @@ The OpenShift WebSocket port is 8000 not 80.
 3. `git clone https://github.com/cloudfoundry/ibm-websphere-liberty-buildpack`
 4. `chmod 755 ibm-websphere-liberty-buildpack/resources/download_buildpack_cache.rb`
 5. Follow steps 5-7 at https://github.com/cloudfoundry/ibm-websphere-liberty-buildpack/blob/master/docs/forking.md to point the buildpack at your own Liberty and JRE binaries (optional - the default binaries downloaded are for development only)
-6. `ibm-websphere-liberty-buildpack/resources/download_buildpack_cache.rb cache`
+6. `ibm-websphere-liberty-buildpack/resources/download_buildpack_cache.rb ibm-websphere-liberty-buildpack/admin_cache`
 7. Disable remote downloads by editing ibm-websphere-liberty-buildpack/config/cache.yml (optional)
 8. Create ibm-websphere-liberty-buildpack/config/licenses.yml as described at https://github.com/cloudfoundry/ibm-websphere-liberty-buildpack/blob/master/docs/installation.md (optional - removes need to set environment variables for each application)
 9. `cd ..`
