@@ -2,8 +2,6 @@
 
 Provides the Liberty profile server on OpenShift. This cartridge makes use of the [IBM WebSphere Application Server Liberty Buildpack][] for Cloud Foundry to provide a more consistent experience between clouds.
 
-It is provided unsupported, for development use only.
-
 ## Accepting the Liberty and JVM Licenses
 
 To deploy applications using this cartridge, you are required to accept the development IBM Liberty license by following the instructions below:
